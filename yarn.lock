@@ -7140,6 +7140,11 @@ react-native-screens@~3.11.1:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
 
+react-native-scroll-menu@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/react-native-scroll-menu/-/react-native-scroll-menu-1.0.7.tgz#ae4a376a102aa149853caaadedee25d4da571b57"
+  integrity sha512-I0IwJAkvJ3LzC3HoqrfkCTv7g/8GIxZozYNludYhucVaP44IJeA0QdBn9pcm85IUq0UXSOlR55DiKyts5OjtAg==
+
 react-native-web@0.17.7:
   version "0.17.7"
   resolved "https://registry.yarnpkg.com/react-native-web/-/react-native-web-0.17.7.tgz#038899dbc94467a0ca0be214b88a30e0c117b176"
