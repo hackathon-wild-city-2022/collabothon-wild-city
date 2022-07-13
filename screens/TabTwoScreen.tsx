@@ -4,6 +4,7 @@ import { Camera } from 'expo-camera';
 import * as tf from '@tensorflow/tfjs';
 import * as mobilenet from '@tensorflow-models/mobilenet';
 import { cameraWithTensors } from '@tensorflow/tfjs-react-native';
+import { getPredictions } from './ImageRecognition';
 
 const textureDims =
   Platform.OS === 'ios'
@@ -31,27 +32,36 @@ export default function App() {
   const [detections, setDetections] = useState<string[]>([]);
   const [net, setNet] = useState<mobilenet.MobileNet>();
 
-  const handleCameraStream = (images: IterableIterator<tf.Tensor3D>) => {
-    const loop = async () => {
-      if (net) {
-        if (frame % computeRecognitionEveryNFrames === 0) {
-          const nextImageTensor = images.next().value;
-          if (nextImageTensor) {
-            const objects = await net.classify(nextImageTensor);
-            if (objects && objects.length > 0) {
-              setDetections(objects.map((object) => object.className));
-            }
-            tf.dispose([nextImageTensor]);
-          }
-        }
-        frame += 1;
-        frame = frame % computeRecognitionEveryNFrames;
-      }
-
-      requestAnimationFrame(loop);
-    };
-    loop();
-  };
+  // const getPredictions = (images: IterableIterator<tf.Tensor3D>) => {
+  //   const loop = async () => {
+  //     if (net) {
+  //       if (frame % computeRecognitionEveryNFrames === 0) {
+  //         const nextImageTensor = images.next().value;
+  //         if (nextImageTensor) {
+  //           const objects = await net.classify(nextImageTensor);
+  //           if (objects && objects.length > 0) {
+  //             setDetections(objects.map((object) => object.className));
+  //           }
+  //           tf.dispose([nextImageTensor]);
+  //         }
+  //       }
+  //       frame += 1;
+  //       frame = frame % computeRecognitionEveryNFrames;
+  //     }
+      
+  //     requestAnimationFrame(loop);
+  //   };
+  //   loop();
+  // };
+  
+  const getPredictionsHandler = async (images: IterableIterator<tf.Tensor3D>) => {
+    const response = await getPredictions(images);
+    // console.log('getPredictionsHandler');
+    console.log("response: ", response);
+    // setDetections(response);
+  }
+  // getPredictions(images)
+  
 
   useEffect(() => {
     (async () => {
@@ -76,9 +86,11 @@ export default function App() {
     <View style={styles.container}>
       <TensorCamera
         style={styles.camera}
-        onReady={handleCameraStream}
+        // onReady={handleCameraStream}
+        onReady={getPredictionsHandler}
         type={Camera.Constants.Type.back}
         cameraTextureWidth={textureDims.width}
+
         resizeHeight={200}
         resizeWidth={152}
         resizeDepth={3}
@@ -100,7 +112,9 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+
     alignItems: 'center',
+    
     justifyContent: 'center'
   },
   text: {
