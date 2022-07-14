@@ -1,12 +1,14 @@
-import React from 'react';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, Text, Image, View, TouchableOpacity } from 'react-native';
-import { CorrectAnswerContext } from '../App';
+import { CorrectAnswerContext, CurrentAnimalContext } from '../App';
 
-export default function ResultScreen({ navigation }) {
+export default function ResultScreen() {
   const answer: any = useContext(CorrectAnswerContext);
   const correctAnswerImage = require('../assets/images/correctAnswer.png');
   const wrongAnswerImage = require('../assets/images/wrongAnswer.png');
+  const navigation = useNavigation();
+  const { currentAnimal } = useContext(CurrentAnimalContext);
 
   return (
     <View style={styles.container}>
@@ -16,7 +18,7 @@ export default function ResultScreen({ navigation }) {
         source={answer.correctAnswer ? correctAnswerImage : wrongAnswerImage}
       />
       <Text style={styles.paragraph}>
-        {answer.correctAnswer ? 'You have collected a HUMAN!' : 'Your answer is incorrect!'}
+        {answer.correctAnswer ? 'You have collected a ' + currentAnimal.flock : 'Your answer is incorrect!'}
       </Text>
       <TouchableOpacity
         style={styles.button}
