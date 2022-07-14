@@ -11,3 +11,10 @@ export const fetchCaightAnimals = async (deviceId: string) => {
     const response = await fetch('http://zoo.dwiegodzinydonikad.pl/animals/unlocked', options);
     return await response.json();
 };
+
+export const fetchRanking = async (deviceId: string) => {
+    console.log("fetchRanking");
+    const options = { method: 'GET', headers: { 'x-client-id': deviceId } };
+    const response = await fetch('http://zoo.dwiegodzinydonikad.pl/ratingList', options);
+    return await response.json();
+};

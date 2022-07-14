@@ -42,7 +42,7 @@ export default function TabTwoScreen() {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === 'granted');
-      await initialiseTensorflow();
+      await initialiseTensorflow(); 
       setModel(await loadModel());
     })();
   }, []);
