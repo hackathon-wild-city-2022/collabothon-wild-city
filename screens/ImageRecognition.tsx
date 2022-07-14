@@ -5,11 +5,6 @@ import { bundleResourceIO, decodeJpeg } from '@tensorflow/tfjs-react-native';
 import * as FileSystem from 'expo-file-system';
 import { useMemo } from 'react';
 
-// import modelJSON from "../imageRecognition/model.json"
-// import modelWeights from "../imageRecognition/group1-shard1of1.bin"
-
-// import modelJSON from "http://zoo.dwiegodzinydonikad.pl/model.json";
-
 class L2 {
   static className = 'L2';
 
@@ -21,39 +16,25 @@ tf.serialization.registerClass(L2);
 
 let model = null;
 
-// const modelJSON = require('../imageRecognition/model.json');
-// const modelWeights = require('../imageRecognition/group1-shard1of1.bin');
-
-const loadModel = async () => {
-  //.ts: const loadModel = async ():Promise<void|tf.LayersModel>=>{
-  // const model = await tf.loadLayersModel(bundleResourceIO(modelJSON, modelWeights)).catch((e) => {
-  //   console.log('[LOADING ERROR] info:', e);
-  // });
+export const loadModel = async () => {
   await tf.ready();
+  if (model) {
+    return model;
+  }
   model = await tf
-    .loadGraphModel('http://zoo.dwiegodzinydonikad.pl/model.json')
+    .loadLayersModel('http://zoo.dwiegodzinydonikad.pl/model.json')
     .catch((e) => {
       console.log('[LOADING ERROR] info:', e);
     });
-
+  console.log("Model loaded from: http://zoo.dwiegodzinydonikad.pl/model.json ");
   return model;
 };
 
-// const makePredictions = async ( batch: any, model: { predict: (arg0: any) => any; }, imagesTensor: any )=>{
-const makePredictions = async (
-  batch: number,
-  model: tf.LayersModel,
-  imagesTensor: tf.Tensor<tf.Rank>
-): Promise<tf.Tensor<tf.Rank>[]> => {
-  const predictionsdata: tf.Tensor = model.predict(imagesTensor, { batchSize: 1 }) as tf.Tensor;
-  return predictionsdata.data();
-};
-
-export const getPredictions = async (tensor_image) => {
-  const model = (await loadModel()) as tf.LayersModel;
+export const getPredictions = async (model, tensor_image) => {
   const imageTensorReshaped = tensor_image.expandDims(0);
-  const predictions = await makePredictions(1, model, imageTensorReshaped);
-  return predictions;
+  const predictions: tf.Tensor = model.predict(imageTensorReshaped, 1) as tf.Tensor;
+  // console.log(await predictions.data());
+  return predictions.data();
 };
 
 export const getLabels = () => {
@@ -68,6 +49,7 @@ export const getLabels = () => {
     'makak',
     'orangutan',
     'ostrish',
+    'other',
     'otter',
     'pinguin',
     'shark',

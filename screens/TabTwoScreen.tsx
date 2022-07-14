@@ -1,10 +1,12 @@
+//@ts-nocheck
+
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Platform } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as tf from '@tensorflow/tfjs';
 import * as mobilenet from '@tensorflow-models/mobilenet';
 import { cameraWithTensors } from '@tensorflow/tfjs-react-native';
-import { getLabels, getPredictions } from './ImageRecognition';
+import { getLabels, getPredictions, loadModel } from './ImageRecognition';
 
 const textureDims =
   Platform.OS === 'ios'
@@ -17,10 +19,8 @@ const textureDims =
       width: 1600
     };
 
-let frame = 0;
-const computeRecognitionEveryNFrames = 60;
-
 const TensorCamera = cameraWithTensors(Camera);
+let requestAnimationFrameId = 0;
 const classLabels = getLabels();
 
 const initialiseTensorflow = async () => {
@@ -33,64 +33,59 @@ export default function TabTwoScreen() {
   const [detections, setDetections] = useState<string[]>([]);
   const [model, setModel] = useState<any>();
 
-  // const getPredictions = (images: IterableIterator<tf.Tensor3D>) => {
-  //   const loop = async () => {
-  //     if (net) {
-  //       if (frame % computeRecognitionEveryNFrames === 0) {
-  //         const nextImageTensor = images.next().value;
-  //         if (nextImageTensor) {
-  //           const objects = await net.classify(nextImageTensor);
-  //           if (objects && objects.length > 0) {
-  //             setDetections(objects.map((object) => object.className));
-  //           }
-  //           tf.dispose([nextImageTensor]);
-  //         }
-  //       }
-  //       frame += 1;
-  //       frame = frame % computeRecognitionEveryNFrames;
-  //     }
-
-  //     requestAnimationFrame(loop);
-  //   };
-  //   loop();
-  // };
-
-
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === 'granted');
       await initialiseTensorflow();
-      // setModel(loadModel());
-      // setNet(await mobilenet.load({ version: 1, alpha: 0.25 }));
+      setModel(await loadModel());
     })();
   }, []);
 
-  const getPredictionsHandler = async (images: IterableIterator<tf.Tensor3D>) => {
+  const getPredictionsHandler = async (images: IterableIterator<tf.Tensor3D>, updatePreview, gl) => {
+    await initialiseTensorflow();
+    setModel(await loadModel());
 
     let frameCount = 0;
     let makePredictionsEveryNFrames = 50;
     const loop = async () => {
       const nextImageTensor = images.next().value;
 
-      if (nextImageTensor) {
+      if (nextImageTensor && model) {
         if (frameCount % makePredictionsEveryNFrames === 0) {
-          const predictions = await getPredictions(nextImageTensor);
-          // console.log("predictions", predictions);
+          const predictions = await getPredictions(model, nextImageTensor);
 
-          if(Math.max(...predictions) > 0.9){
+          // const merged = classLabels.reduce((obj, key, index) => ({ ...obj, [key]: predictions[index] }), {});
+          // console.log(merged);
+
+          if (Math.max(...predictions) > 0.9) {
             const maxKey = predictions.indexOf(Math.max(...predictions));
-            console.log("maxKey", classLabels[maxKey]);
-            setDetections([classLabels[maxKey]]);
+            console.log("maxKey", classLabels[maxKey], Math.max(...predictions));
+            if (classLabels[maxKey] != "other") {
+              setDetections([classLabels[maxKey]]);
+            } else {
+              setDetections([]);
+            } 
+          } else {
+            setDetections([]);
           }
+          tf.dispose([nextImageTensor]);
         }
-      }  
+      }
       frameCount += 1;
       frameCount = frameCount % makePredictionsEveryNFrames;
-      requestAnimationFrame(loop);
+      updatePreview();
+      gl.endFrameEXP();
+      requestAnimationFrameId = requestAnimationFrame(loop);
     }
     loop();
   }
+
+  useEffect(() => {
+    return () => {
+      // cancelAnimationFrame(requestAnimationFrameId);
+    };
+  }, [requestAnimationFrameId]);
 
   if (hasPermission === null) {
     return <View />;
@@ -98,24 +93,20 @@ export default function TabTwoScreen() {
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
   }
-  // if (!net) {
-  //   return <Text>Model not loaded</Text>;
-  // }
 
   return (
     <View style={styles.container}>
       <TensorCamera
         style={styles.camera}
-        // onReady={handleCameraStream}
         onReady={getPredictionsHandler}
         type={Camera.Constants.Type.back}
         cameraTextureWidth={textureDims.width}
+        cameraTextureHeight={textureDims.height}
 
         resizeHeight={300}
         resizeWidth={152}
         resizeDepth={3}
         autorender={true}
-        cameraTextureHeight={textureDims.height}
         useCustomShadersToResize={false}
       />
       <View style={styles.text}>
