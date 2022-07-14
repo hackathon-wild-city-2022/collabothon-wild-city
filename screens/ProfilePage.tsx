@@ -24,8 +24,8 @@ export default function ProfilePage() {
   return (
     <View style={styles.headerContainer}>
       <View style={styles.header}>
-        <Text style={styles.name}>Cześć Karolina!</Text>
-        <Text style={styles.points}>Masz 45 punktów</Text>
+        <Text style={styles.name}>Hi, Karolina!</Text>
+        <Text style={styles.points}>You have 45 points</Text>
       </View>
       <View style={styles.settingsContainer}>
         <View style={styles.uploadImageWrapper}>
@@ -33,10 +33,10 @@ export default function ProfilePage() {
         </View>
 
         <TouchableOpacity style={styles.button} onPress={() => {}}>
-          <Text style={styles.buttonText}>Edytuj profil</Text>
+          <Text style={styles.buttonText}>Edit profile</Text>
         </TouchableOpacity>
         <View style={styles.settingWrapper}>
-          <Text style={styles.settingName}>Powiadomienia</Text>
+          <Text style={styles.settingName}>Notifications</Text>
           <Switch
             trackColor={{ false: '#767577', true: '#1D8776' }}
             thumbColor={isNotificationEnabled ? '#24A993' : '#f4f3f4'}
@@ -46,7 +46,7 @@ export default function ProfilePage() {
           />
         </View>
         <View style={styles.settingWrapper}>
-          <Text style={styles.settingName}>Wibracje</Text>
+          <Text style={styles.settingName}>Vibrations</Text>
           <Switch
             trackColor={{ false: '#767577', true: '#1D8776' }}
             thumbColor={isVibrateEnabled ? '#24A993' : '#f4f3f4'}
@@ -56,7 +56,7 @@ export default function ProfilePage() {
           />
         </View>
         <View style={styles.settingWrapper}>
-          <Text style={styles.settingName}>Dźwięki</Text>
+          <Text style={styles.settingName}>Sounds</Text>
           <Switch
             trackColor={{ false: '#767577', true: '#1D8776' }}
             thumbColor={isSoundEnabled ? '#24A993' : '#f4f3f4'}

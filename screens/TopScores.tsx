@@ -25,7 +25,7 @@ export default function TopScores() {
   return (
     <View style={styles.TopScoresContainer}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Najlepsze wyniki</Text>
+        <Text style={styles.headerText}>Top scores</Text>
 
         {/* <View style={styles.firstPlace}></View>
         <View style={styles.secondPlace}></View>

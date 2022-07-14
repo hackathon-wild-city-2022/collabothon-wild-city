@@ -24,9 +24,9 @@ export default function UploadImage() {
   const checkForCameraRollPermission = async () => {
     const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      alert('Proszę o dostęp do pamięci telefonu');
+      alert('Allow access to the phone storage');
     } else {
-      console.log('Dostęp do pamięci telefonu udzielony');
+      console.log('Access granted');
     }
   };
 
@@ -35,7 +35,7 @@ export default function UploadImage() {
       {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
       <View style={imageUploaderStyles.uploadBtnContainer}>
         <TouchableOpacity onPress={addImage} style={imageUploaderStyles.uploadBtn}>
-          <Text>{image ? 'Zmień' : 'Prześlij'} zdjęcie</Text>
+          <Text>{image ? 'Change' : 'Send'} photo</Text>
           <AntDesign name="camera" size={20} color="black" />
         </TouchableOpacity>
       </View>
