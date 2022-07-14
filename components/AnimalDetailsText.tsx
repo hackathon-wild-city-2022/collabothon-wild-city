@@ -1,8 +1,9 @@
 import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 
-export default function AnimalDetailsText() {
-  return <Text style={styles.animalDetail}>6000kg</Text>;
+export default function AnimalDetailsText(props: { extinctionRisk: string }) {
+  const { extinctionRisk } = props;
+  return <Text style={styles.animalDetail}>{extinctionRisk}</Text>;
 }
 
 const styles = StyleSheet.create({
@@ -16,6 +17,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     lineHeight: 50,
     marginTop: 20,
-    alignSelf: 'center',
+    alignSelf: 'center'
   }
 });
