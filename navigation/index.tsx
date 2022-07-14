@@ -8,7 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Pressable } from 'react-native';
+import { ColorSchemeName, Image, Pressable, TouchableOpacity, View } from 'react-native';
 import Map from '../components/Map';
 
 import Colors from '../constants/Colors';
@@ -19,9 +19,34 @@ import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import ProfilePage from '../screens/ProfilePage';
 import TopScores from '../screens/TopScores';
+// const image from '..'
 
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+
+const CustomTabBarButton = ({ children, onPress }) => {
+  return (
+    <TouchableOpacity
+      style={{
+        top: -12,
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
+      onPress={onPress}>
+      <View
+        style={{
+          width: 82,
+          height: 82,
+          borderRadius: 41,
+          backgroundColor: '#0E443B',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+        {children}
+      </View>
+    </TouchableOpacity>
+  );
+};
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -64,7 +89,9 @@ function BottomTabNavigator() {
     <BottomTab.Navigator
       initialRouteName="Trophies"
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme].tint
+        tabBarActiveTintColor: Colors[colorScheme].tint,
+        tabBarShowLabel: false,
+        tabBarIconStyle: { backgroundColor: '#fff', height: 86 }
       }}>
       <BottomTab.Screen
         name="Trophies"
@@ -72,7 +99,7 @@ function BottomTabNavigator() {
         options={({ navigation }: RootTabScreenProps<'Trophies'>) => ({
           title: 'Trofea',
           headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="trophy" color={color} />
+          tabBarIcon: ({ color }) => <Image source={require('../assets/images/Frame_1.png')} />
         })}
       />
       <BottomTab.Screen
@@ -81,7 +108,7 @@ function BottomTabNavigator() {
         options={{
           title: 'Ranking',
           headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="star" color={color} />
+          tabBarIcon: ({ color }) => <Image source={require('../assets/images/star.png')} />
         }}
       />
       <BottomTab.Screen
@@ -90,7 +117,14 @@ function BottomTabNavigator() {
         options={{
           title: 'Aparat',
           headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="camera" color={color} />
+          tabBarIcon: ({ focused }) => (
+            <Image
+              source={require('../assets/images/camera.png')}
+              resizeMode="contain"
+              style={{ width: 30, height: 30, tintColor: '#fff' }}
+            />
+          ),
+          tabBarButton: (props) => <CustomTabBarButton {...props} />
         }}
       />
       <BottomTab.Screen
@@ -99,7 +133,7 @@ function BottomTabNavigator() {
         options={{
           title: 'Mapa',
           headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="map" color={color} />
+          tabBarIcon: ({ color }) => <Image source={require('../assets/images/map.png')} />
         }}
       />
       <BottomTab.Screen
@@ -108,7 +142,7 @@ function BottomTabNavigator() {
         options={{
           title: 'Profil',
           headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />
+          tabBarIcon: ({ color }) => <Image source={require('../assets/images/user.png')} />
         }}
       />
     </BottomTab.Navigator>
