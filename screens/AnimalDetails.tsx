@@ -15,24 +15,8 @@ const image = {
   uri: 'https://ocdn.eu/pulscms-transforms/1/3aPk9kpTURBXy83YzgzYmNiNThjYzM1NjhkZWI0YWIyZmFjNDU3ZmQ0OS5qcGeTlQMAzQFLzQ7YzQhakwmmZTZlOTc0BpMFzQSwzQJ2gaEwAQ/slon-indyjski.jpg'
 };
 
-export const currentAnimal = {
-  id: 1,
-  name: 'Alutera pisana',
-  latinName: 'Aluterus scriptus',
-  flock: 'Ryby',
-  pictureSrc: 'https://orientarium.lodz.pl/assets/2022/04/alutera-pisana-2-591x601.jpg',
-  weight: '2,5 kg',
-  width: '55-110 cm',
-  height: '',
-  threatLevel: 'Najniższego ryzyka LC',
-  summary:
-    'Alutery występują w płytkich wodach o głębokości do 120 m. W skład ich diety wchodzą głównie wodorosty, osłonice i ukwiały.',
-  description: 'Ryba ta jest powszechna w całym rejonie swojego występowania.',
-  originPlace: 'https://orientarium.lodz.pl/assets/2022/04/mapa_szablon_alutera_pisana-591x349.jpg'
-};
-
 export default function AnimalDetails() {
-  // const { currentAnimal } = useContext(CurrentAnimalContext);
+  const { currentAnimal } = useContext(CurrentAnimalContext);
 
   return (
     <View style={styles.container}>
