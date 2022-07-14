@@ -18,6 +18,7 @@ import CollectedAnimals from '../screens/CollectedAnimals';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import ProfilePage from '../screens/ProfilePage';
+import TopScores from '../screens/TopScores';
 
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
@@ -76,7 +77,7 @@ function BottomTabNavigator() {
       />
       <BottomTab.Screen
         name="Ranking"
-        component={AnimalDetails}
+        component={TopScores}
         options={{
           title: 'Ranking',
           headerShown: false,
