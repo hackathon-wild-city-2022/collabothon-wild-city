@@ -4,18 +4,18 @@ import { Camera } from 'expo-camera';
 import * as tf from '@tensorflow/tfjs';
 import * as mobilenet from '@tensorflow-models/mobilenet';
 import { cameraWithTensors } from '@tensorflow/tfjs-react-native';
-import { getPredictions } from './ImageRecognition';
+import { getPredictions, loadModel } from './ImageRecognition';
 
 const textureDims =
   Platform.OS === 'ios'
     ? {
-        height: 1920,
-        width: 1080
-      }
+      height: 1920,
+      width: 1080
+    }
     : {
-        height: 1200,
-        width: 1600
-      };
+      height: 1200,
+      width: 1600
+    };
 
 let frame = 0;
 const computeRecognitionEveryNFrames = 60;
@@ -30,7 +30,7 @@ const initialiseTensorflow = async () => {
 export default function App() {
   const [hasPermission, setHasPermission] = useState<null | boolean>(null);
   const [detections, setDetections] = useState<string[]>([]);
-  const [net, setNet] = useState<mobilenet.MobileNet>();
+  const [model, setModel] = useState<any>();
 
   // const getPredictions = (images: IterableIterator<tf.Tensor3D>) => {
   //   const loop = async () => {
@@ -48,29 +48,45 @@ export default function App() {
   //       frame += 1;
   //       frame = frame % computeRecognitionEveryNFrames;
   //     }
-      
+
   //     requestAnimationFrame(loop);
   //   };
   //   loop();
   // };
-  
-  const getPredictionsHandler = async (images: IterableIterator<tf.Tensor3D>) => {
-    const response = await getPredictions(images);
-    // console.log('getPredictionsHandler');
-    console.log("response: ", response);
-    // setDetections(response);
-  }
-  // getPredictions(images)
-  
+
 
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === 'granted');
       await initialiseTensorflow();
-      setNet(await mobilenet.load({ version: 1, alpha: 0.25 }));
+      // setModel(loadModel());
+      // setNet(await mobilenet.load({ version: 1, alpha: 0.25 }));
     })();
   }, []);
+
+  const getPredictionsHandler = async (images: IterableIterator<tf.Tensor3D>) => {
+
+    let frameCount = 0;
+    let makePredictionsEveryNFrames = 10;
+    const loop = async () => {
+      const nextImageTensor = images.next().value
+
+      // console.log("nextImageTensor", nextImageTensor);
+      if (nextImageTensor) {
+        if (frameCount % makePredictionsEveryNFrames === 0) {
+          const predictions = await getPredictions(nextImageTensor);
+          console.log("predictions", predictions);
+        }
+        // updatePreview();
+        // gl.endFrameEXP();
+      }
+      frameCount += 1;
+      frameCount = frameCount % makePredictionsEveryNFrames;
+      requestAnimationFrame(loop);
+    }
+    loop();
+  }
 
   if (hasPermission === null) {
     return <View />;
@@ -78,9 +94,9 @@ export default function App() {
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
   }
-  if (!net) {
-    return <Text>Model not loaded</Text>;
-  }
+  // if (!net) {
+  //   return <Text>Model not loaded</Text>;
+  // }
 
   return (
     <View style={styles.container}>
@@ -91,7 +107,7 @@ export default function App() {
         type={Camera.Constants.Type.back}
         cameraTextureWidth={textureDims.width}
 
-        resizeHeight={200}
+        resizeHeight={300}
         resizeWidth={152}
         resizeDepth={3}
         autorender={true}
@@ -114,7 +130,7 @@ const styles = StyleSheet.create({
     flex: 1,
 
     alignItems: 'center',
-    
+
     justifyContent: 'center'
   },
   text: {
