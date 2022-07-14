@@ -7,8 +7,10 @@ import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 
 export const CurrentAnimalContext = createContext({});
+export const CorrectAnswerContext = createContext({});
 export const CaughtAnimalsContext = createContext({});
 export const CurrentUserContext = createContext({});
+export const QuizQuestionsContext = createContext({});
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -16,6 +18,8 @@ export default function App() {
   const [currentAnimal, setCurrentAnimal] = useState({} as any);
   const [caughtAnimals, setCaughtAnimals] = useState([] as any[]);
   const [currentUser, setCurrentUser] = useState({} as any);
+  const [quizQuestions, setQuizQuestions] = useState({} as any);
+  const [correctAnswer, setCorrectAnswer] = useState(false as boolean);
 
   useEffect(() => {
     fetchData();
@@ -27,19 +31,29 @@ export default function App() {
     setCaughtAnimals(data);
   };
 
+  const fetchQuizQuestionsData = async () => {
+    const response = await fetch('http://zoo.dwiegodzinydonikad.pl/quizquestions');
+    const data = await response.json();
+    setQuizQuestions(data);
+  };
+
   if (!isLoadingComplete) {
     return null;
   } else {
     return (
       <SafeAreaProvider>
-        <CurrentUserContext.Provider value={{ currentUser, setCurrentUser }}>
-          <CaughtAnimalsContext.Provider value={{ caughtAnimals, setCaughtAnimals }}>
-            <CurrentAnimalContext.Provider value={{ currentAnimal, setCurrentAnimal }}>
-              <Navigation colorScheme={colorScheme} />
-              <StatusBar />
-            </CurrentAnimalContext.Provider>
-          </CaughtAnimalsContext.Provider>
-        </CurrentUserContext.Provider>
+        <CorrectAnswerContext.Provider value={{correctAnswer, setCorrectAnswer}}>
+          <CurrentUserContext.Provider value={{ currentUser, setCurrentUser }}>
+            <CaughtAnimalsContext.Provider value={{ caughtAnimals, setCaughtAnimals }}>
+              <CurrentAnimalContext.Provider value={{ currentAnimal, setCurrentAnimal }}>
+                <Navigation colorScheme={colorScheme} />
+                <StatusBar />
+              </CurrentAnimalContext.Provider>
+            </CaughtAnimalsContext.Provider>
+            <QuizQuestionsContext.Provider value={{quizQuestions, setQuizQuestions}}>
+            </QuizQuestionsContext.Provider>
+          </CurrentUserContext.Provider>
+        </CorrectAnswerContext.Provider>
       </SafeAreaProvider>
     );
   }

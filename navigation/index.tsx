@@ -16,6 +16,7 @@ import useColorScheme from '../hooks/useColorScheme';
 import AnimalDetails from '../screens/AnimalDetails';
 import CollectedAnimals from '../screens/CollectedAnimals';
 import ModalScreen from '../screens/ModalScreen';
+import PlayQuiz from '../screens/PlayQuizScreen'
 import NotFoundScreen from '../screens/NotFoundScreen';
 import ProfilePage from '../screens/ProfilePage';
 import TabTwoScreen from '../screens/TabTwoScreen';
@@ -23,6 +24,7 @@ import TopScores from '../screens/TopScores';
 
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import ResultScreen from '../screens/ResultScreen';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -45,6 +47,8 @@ function RootNavigator() {
     <Stack.Navigator>
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+      <Stack.Screen name="ResultScreen" component={ResultScreen} options={{ title: 'ResultScreen' }} />
+      <Stack.Screen name="PlayQuiz" component={PlayQuiz} options={{ title: 'PlayQuiz' }} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
@@ -110,6 +114,15 @@ function BottomTabNavigator() {
           title: 'Profil',
           headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />
+        }}
+      />
+      <BottomTab.Screen
+        name="Test"
+        component={PlayQuiz}
+        options={{
+          title: 'Test',
+          headerShown: false,
+          tabBarIcon: ({ color }) => <TabBarIcon name="test" color={color} />
         }}
       />
     </BottomTab.Navigator>
