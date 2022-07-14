@@ -3,6 +3,7 @@
 import * as tf from '@tensorflow/tfjs';
 import { bundleResourceIO, decodeJpeg } from '@tensorflow/tfjs-react-native';
 import * as FileSystem from 'expo-file-system';
+import { useMemo } from 'react';
 
 // import modelJSON from "../imageRecognition/model.json"
 // import modelWeights from "../imageRecognition/group1-shard1of1.bin"
@@ -18,6 +19,8 @@ class L2 {
 }
 tf.serialization.registerClass(L2);
 
+let model = null;
+
 // const modelJSON = require('../imageRecognition/model.json');
 // const modelWeights = require('../imageRecognition/group1-shard1of1.bin');
 
@@ -26,17 +29,20 @@ const loadModel = async () => {
   // const model = await tf.loadLayersModel(bundleResourceIO(modelJSON, modelWeights)).catch((e) => {
   //   console.log('[LOADING ERROR] info:', e);
   // });
-  const model = await tf
+  await tf.ready();
+  model = await tf
     .loadLayersModel('http://zoo.dwiegodzinydonikad.pl/model.json')
     .catch((e) => {
       console.log('[LOADING ERROR] info:', e);
     });
+
   return model;
 };
 
 const transformImageToTensor = async (uri: string) => {
   //.ts: const transformImageToTensor = async (uri:string):Promise<tf.Tensor>=>{
   //read the image as base64
+  console.log("transformImageToTensor", uri);
   const img64 = await FileSystem.readAsStringAsync(uri, {
     encoding: FileSystem.EncodingType.Base64
   });
@@ -61,19 +67,15 @@ const makePredictions = async (
 ): Promise<tf.Tensor<tf.Rank>[]> => {
   //cast output prediction to tensor
   // const predictionsdata= model.predict(imagesTensor)
-  const predictionsdata: tf.Tensor = model.predict(imagesTensor) as tf.Tensor;
+  const predictionsdata: tf.Tensor = model.predict(imagesTensor, { batchSize: 1 }) as tf.Tensor;
   let pred = predictionsdata.split(batch); //split by batch size
   //return predictions
   return pred;
 };
 
-export const getPredictions = async (image) => {
-  await tf.ready();
+export const getPredictions = async (tensor_image) => {
   const model = (await loadModel()) as tf.LayersModel;
-  console.log(model)
-  const tensor_image = await transformImageToTensor(image);
-  const predictions = await makePredictions(1, model, tensor_image);
-console.log(predictions)
-console.log('hahahah')
+  const imageTensorReshaped = tensor_image.expandDims(0);
+  const predictions = await makePredictions(1, model, imageTensorReshaped);
   return predictions;
 };
