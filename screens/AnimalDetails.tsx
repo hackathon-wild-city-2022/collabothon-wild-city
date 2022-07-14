@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   ImageBackground,
   ScrollView,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { CurrentAnimalContext } from '../App';
 import AnimalDetailsText from '../components/AnimalDetailsText';
 import AnimalDetailsTextSmall from '../components/AnimalDetailsTextSmall';
 
@@ -14,39 +15,46 @@ const image = {
   uri: 'https://ocdn.eu/pulscms-transforms/1/3aPk9kpTURBXy83YzgzYmNiNThjYzM1NjhkZWI0YWIyZmFjNDU3ZmQ0OS5qcGeTlQMAzQFLzQ7YzQhakwmmZTZlOTc0BpMFzQSwzQJ2gaEwAQ/slon-indyjski.jpg'
 };
 
+export const currentAnimal = {
+  id: 1,
+  name: 'Alutera pisana',
+  latinName: 'Aluterus scriptus',
+  flock: 'Ryby',
+  pictureSrc: 'https://orientarium.lodz.pl/assets/2022/04/alutera-pisana-2-591x601.jpg',
+  weight: '2,5 kg',
+  width: '55-110 cm',
+  height: '',
+  threatLevel: 'Najniższego ryzyka LC',
+  summary:
+    'Alutery występują w płytkich wodach o głębokości do 120 m. W skład ich diety wchodzą głównie wodorosty, osłonice i ukwiały.',
+  description: 'Ryba ta jest powszechna w całym rejonie swojego występowania.',
+  originPlace: 'https://orientarium.lodz.pl/assets/2022/04/mapa_szablon_alutera_pisana-591x349.jpg'
+};
+
 export default function AnimalDetails() {
+  // const { currentAnimal } = useContext(CurrentAnimalContext);
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <ImageBackground source={image} resizeMode="cover" style={styles.image}>
-          <Text style={styles.headerContainerTitle}>Słoń indyjski</Text>
+        <ImageBackground
+          source={{ uri: currentAnimal.pictureSrc }}
+          resizeMode="cover"
+          style={styles.image}>
+          <Text style={styles.headerContainerTitle}>{currentAnimal.name}</Text>
         </ImageBackground>
       </View>
       <View style={styles.detailsContainer}>
-        <AnimalDetailsText />
+        <AnimalDetailsText extinctionRisk={currentAnimal.threatLevel} />
         <View style={styles.detailsSmallContainer}>
-          <AnimalDetailsTextSmall />
-          <AnimalDetailsTextSmall />
-          <AnimalDetailsTextSmall />
+          <AnimalDetailsTextSmall text={currentAnimal.weight || currentAnimal.flock} />
+          <AnimalDetailsTextSmall text={currentAnimal.width || currentAnimal.flock} />
+          <AnimalDetailsTextSmall text={currentAnimal.height || currentAnimal.flock} />
         </View>
       </View>
       <View style={styles.descriptionContainer}>
         <ScrollView horizontal={false} contentContainerStyle={styles.menuWrapperScroller}>
-          <Text style={styles.description}>
-            Jest największym ssakiem lądowym żyjącym na ziemi. Od 1986 r. słoń azjatycki jest
-            opisywany w Czerwonej Księdze Zwierząt IUCN jako gatunek zagrożony - w ciągu ostatnich
-            60-75 lat jego liczebność zmniejszyła się ok. 50 procent. Trąba słoni, która powstała w
-            wyniku połączenia nosa i górnej wargi służy do chwytania, pobierania pokarmu i wody, a
-            także do i komunikacji ze stadem. Zwierzęta te spożywają głównie trawy, liście, mniejsze
-            gałęzie i owoce. Ich żołądki trawią pokarm mało efektywnie – nawet 50 % karmy opuszcza
-            ciało słonia w tej samej formie w jakiej do niego trafiło. To dlatego słonie są zmuszone
-            do poświęcania tak dużej ilości czasu (nawet 18 – 20 godzin na dobę) na poszukiwanie i
-            zjadanie pokarmu. Podczas tych wędrówek wydeptują w dżungli prawdziwe leśne autostrady,
-            z których potem korzystają ludzie i inne zwierzęta.Dziennie dorosły słoń potrafi zjeść
-            nawet do 200 kg.Zwierzęta te żyją ok 60-70 lat.Gatunek zagrożony jest przede wszystkim
-            niszczeniem, fragmentacją i utratą siedlisk. Istotnym problemem jest też kłusownictwo –
-            słonie zabijane są nie tylko dla ciosów, ale też dla skóry.
-          </Text>
+          <Text style={styles.description}>{currentAnimal.description}</Text>
         </ScrollView>
       </View>
       <View style={styles.footerContainer}>
