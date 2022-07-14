@@ -9,6 +9,7 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ColorSchemeName, Pressable } from 'react-native';
+import Map from '../components/Map';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -92,7 +93,7 @@ function BottomTabNavigator() {
       />
       <BottomTab.Screen
         name="Map"
-        component={AnimalDetails}
+        component={Map}
         options={{
           title: 'Mapa',
           headerShown: false,
