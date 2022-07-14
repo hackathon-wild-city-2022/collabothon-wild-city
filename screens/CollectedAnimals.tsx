@@ -15,34 +15,34 @@ export default function CollectedAnimals() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Zebrane zwierzęta</Text>
+      <Text style={styles.title}>Collected animals</Text>
       <TextInput
         style={styles.input}
-        placeholder="Wyszukaj zwierzę"
+        placeholder="Search animal by name"
         onChangeText={(text) => setSearchPhrase(text)}
       />
       <View style={styles.separator}>
-        <Text style={styles.subtitle}>Kategoria</Text>
+        <Text style={styles.subtitle}>Category</Text>
         <TouchableOpacity style={styles.button} onPress={() => handleFlockChange('All')}>
-          <Text>Zobacz wszystkie</Text>
+          <Text>View all</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.menuWrapper}>
         <ScrollView horizontal={true} contentContainerStyle={styles.menuWrapperScroller}>
           <TouchableOpacity style={styles.spieceButton} onPress={() => handleFlockChange('Ssaki')}>
-            <Text>Ssaki</Text>
+            <Text>Mammals</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.spieceButton} onPress={() => handleFlockChange('Ptaki')}>
-            <Text>Ptaki</Text>
+            <Text>Birds</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.spieceButton} onPress={() => handleFlockChange('Płazy')}>
-            <Text>Płazy</Text>
+            <Text>Amphibians</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.spieceButton} onPress={() => handleFlockChange('Ryby')}>
-            <Text>Ryby</Text>
+            <Text>Fishes</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.spieceButton} onPress={() => handleFlockChange('Gady')}>
-            <Text>Gady</Text>
+            <Text>Reptiles</Text>
           </TouchableOpacity>
         </ScrollView>
       </View>

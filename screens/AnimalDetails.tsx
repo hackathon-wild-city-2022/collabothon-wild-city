@@ -59,7 +59,7 @@ export default function AnimalDetails() {
       </View>
       <View style={styles.footerContainer}>
         <TouchableOpacity style={styles.button} onPress={() => {}}>
-          <Text style={styles.buttonText}>Przekaż datek</Text>
+          <Text style={styles.buttonText}>Donate</Text>
         </TouchableOpacity>
       </View>
     </View>
