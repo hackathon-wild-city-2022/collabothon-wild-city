@@ -18,6 +18,7 @@ import CollectedAnimals from '../screens/CollectedAnimals';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import ProfilePage from '../screens/ProfilePage';
+import TabTwoScreen from '../screens/TabTwoScreen';
 
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
@@ -85,7 +86,7 @@ function BottomTabNavigator() {
       />
       <BottomTab.Screen
         name="Camera"
-        component={AnimalDetails}
+        component={TabTwoScreen}
         options={{
           title: 'Aparat',
           headerShown: false,
