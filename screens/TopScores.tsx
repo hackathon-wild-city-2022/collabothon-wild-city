@@ -14,7 +14,6 @@ export default function TopScores() {
     (async () => {
       const data = await fetchRanking(deviceIdContext);
       setTopScores(data.map((elem) => {
-        console.log(elem);
         return { userName: elem.nickname, highScore: elem.count };
       }));
     })();
