@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ResultScreen from './ResultScreen';
 import Navigation from '../navigation';
-import { CorrectAnswerContext } from '../App';
+import { CorrectAnswerContext, CurrentAnimalContext } from '../App';
 //import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Stack = createNativeStackNavigator();
@@ -37,7 +37,8 @@ const QuizData = [
     // }
 ];
 
-export default function PlayQuiz({navigation}) {
+export default function PlayQuiz({ navigation }) {
+    const { currentAnimal, setCurrentAnimal } = useContext(CurrentAnimalContext);
 
     const allQuestions = QuizData;
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -67,7 +68,7 @@ export default function PlayQuiz({navigation}) {
     }
 
     const handleNext = () => {
-        
+
         if (currentQuestionIndex == allQuestions.length - 1) {
             // Last Question
             // Show Score Modal
