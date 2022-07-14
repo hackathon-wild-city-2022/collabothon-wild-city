@@ -1,6 +1,13 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { View, Text, SafeAreaView, StatusBar, Image, TouchableOpacity, Modal, Animated } from 'react-native'
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import ResultScreen from './ResultScreen';
+import Navigation from '../navigation';
+import { CorrectAnswerContext } from '../App';
 //import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
+const Stack = createNativeStackNavigator();
 
 const QuizData = [
     {
@@ -30,7 +37,7 @@ const QuizData = [
     // }
 ];
 
-export default function PlayQuiz() {
+export default function PlayQuiz({navigation}) {
 
     const allQuestions = QuizData;
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -40,21 +47,27 @@ export default function PlayQuiz() {
     const [score, setScore] = useState(0)
     const [showNextButton, setShowNextButton] = useState(false)
     const [showScoreModal, setShowScoreModal] = useState(false)
+    const answer: any = useContext(CorrectAnswerContext)
 
     const validateAnswer = (selectedOption) => {
         let correct_option = allQuestions[currentQuestionIndex]['correct_option'];
         setCurrentOptionSelected(selectedOption);
         setCorrectOption(correct_option);
         setIsOptionsDisabled(true);
+        answer.setCorrectAnswer(false)
         if (selectedOption == correct_option) {
             // Set Score
             setScore(score + 1)
+            answer.setCorrectAnswer(true)
         }
+        else
+            answer.setCorrectAnswer(false)
         // Show Next Button
         setShowNextButton(true)
     }
 
     const handleNext = () => {
+        
         if (currentQuestionIndex == allQuestions.length - 1) {
             // Last Question
             // Show Score Modal
@@ -71,6 +84,8 @@ export default function PlayQuiz() {
             duration: 1000,
             useNativeDriver: false
         }).start();
+
+
     }
 
     const restartQuiz = () => {
@@ -180,7 +195,8 @@ export default function PlayQuiz() {
         if (showNextButton) {
             return (
                 <TouchableOpacity
-                    onPress={handleNext}
+
+                    onPress={() => navigation.navigate('ResultScreen')}
                     style={{
                         marginTop: 20, width: '100%', backgroundColor: COLORS.accent, padding: 20, borderRadius: 5
                     }}>

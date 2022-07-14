@@ -1,19 +1,29 @@
 import React from 'react';
+import { useContext } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { CorrectAnswerContext } from '../App';
 
-export default function ResultScreen() {
-
-let score = 0;
+export default function ResultScreen({ navigation }) {
+  const answer: any = useContext(CorrectAnswerContext);
+  let score = 0;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{score > 0 ? 'CONGRATS!' : 'OOPS!'}</Text>
-      <Text style={styles.paragraph}>{score > 0 ? 'You have collected a HUMAN!' : 'Your answer is incorrect!'}</Text>
-      <TouchableOpacity style={styles.button} onPress={() => {}}>
-          <Text style={styles.buttonText}>{score > 0 ? 'Details' : 'Try Again!'}</Text>
-        </TouchableOpacity>
+      <Text style={styles.title}>{answer.correctAnswer ? 'CONGRATS!' : 'OOPS!'}</Text>
+      <Text style={styles.paragraph}>
+        {answer.correctAnswer ? 'You have collected a HUMAN!' : 'Your answer is incorrect!'}
+      </Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() =>
+          answer.correctAnswer
+            ? navigation.navigate('AnimalDetails')
+            : navigation.navigate('PlayQuiz')
+        }>
+        <Text style={styles.buttonText}>{answer.correctAnswer ? 'Details' : 'Try Again'}</Text>
+      </TouchableOpacity>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
