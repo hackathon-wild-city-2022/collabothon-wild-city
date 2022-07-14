@@ -13,6 +13,9 @@ export default function CollectedAnimals({navigation}) {
   const [searchPhrase, setSearchPhrase] = useState('');
 
   const caughtIds = useMemo(() => {
+    if(!caughtAnimals){
+      return [];
+    }
     return caughtAnimals.map((animal) => {
       return animal.id;
     });

@@ -28,10 +28,13 @@ export default function App() {
   const [correctAnswer, setCorrectAnswer] = useState(false as boolean);
 
   useEffect(() => {
-    getDeviceId();
-    setAllAnimals(fetchAllAnimal(deviceId));
-    setCaughtAnimals(fetchCaightAnimals(deviceId));
-  }, [deviceId]);
+    (async () => {
+      console.log("asdf");
+      getDeviceId();
+      setAllAnimals(await fetchAllAnimal(deviceId));
+      setCaughtAnimals(await fetchCaightAnimals(deviceId));
+    })();
+  }, []);
 
   const getDeviceId = async () => {
     const value = await AsyncStorage.getItem('deviceId');
