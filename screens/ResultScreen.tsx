@@ -1,15 +1,20 @@
 import React from 'react';
 import { useContext } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, Image, View, TouchableOpacity } from 'react-native';
 import { CorrectAnswerContext } from '../App';
 
 export default function ResultScreen({ navigation }) {
   const answer: any = useContext(CorrectAnswerContext);
-  let score = 0;
+  const correctAnswerImage = require('../assets/images/correctAnswer.png');
+  const wrongAnswerImage = require('../assets/images/wrongAnswer.png');
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{answer.correctAnswer ? 'CONGRATS!' : 'OOPS!'}</Text>
+      <Image
+        style={styles.answerImageStyle}
+        source={answer.correctAnswer ? correctAnswerImage : wrongAnswerImage}
+      />
       <Text style={styles.paragraph}>
         {answer.correctAnswer ? 'You have collected a HUMAN!' : 'Your answer is incorrect!'}
       </Text>
@@ -60,5 +65,9 @@ const styles = StyleSheet.create({
     fontSize: 30,
     textAlign: 'center',
     lineHeight: 60
+  },
+  answerImageStyle: {
+    width: 300,
+    height: 300
   }
 });
