@@ -122,7 +122,7 @@ function BottomTabNavigator() {
         options={{
           title: 'Test',
           headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="test" color={color} />
+          tabBarIcon: ({ color }) => <TabBarIcon name="dot-circle-o" color={color} />
         }}
       />
     </BottomTab.Navigator>

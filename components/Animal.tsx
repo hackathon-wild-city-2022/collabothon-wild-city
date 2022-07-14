@@ -1,12 +1,12 @@
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
-export default function Animal(props: { animal: any; img: any }) {
-  const { animal, img } = props;
+export default function Animal(props: { animal: string; img: string; enabled: boolean }) {
+  const { animal, img, enabled } = props;
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: img }} style={styles.image} />
+      <Image source={{ uri: img }} style={enabled ? styles.image : styles.imageEnabled} />
       <Text style={styles.animalTitle}>{animal}</Text>
     </View>
   );
@@ -14,18 +14,25 @@ export default function Animal(props: { animal: any; img: any }) {
 
 const styles = StyleSheet.create({
   image: {
-    width: 100,
-    height: 100,
-    borderRadius: 50
+    width: 90,
+    height: 90,
+    borderRadius: 50,
+    opacity: 0.2,
+  },
+  imageEnabled: {
+    width: 90,
+    height: 90,
+    borderRadius: 50,
   },
   animalTitle: {
-    fontSize: 18,
+    fontSize: 14,
     color: '#000',
-    marginTop: 12
+    marginTop: 12,
+    textAlign: 'center',
   },
   container: {
     display: 'flex',
-    alignContent: 'center',
+    alignContent: 'stretch',
     width: 100,
     justifyContent: 'center',
     alignItems: 'center',

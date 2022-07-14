@@ -1,17 +1,38 @@
+//@ts-nocheck
+
 import React, { useContext, useState } from 'react';
+import { useMemo } from 'react';
+import { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { CaughtAnimalsContext } from '../App';
+import { AllAnimalsContext, CaughtAnimalsContext } from '../App';
 import Animal from '../components/Animal';
 
 export default function CollectedAnimals() {
   const { caughtAnimals } = useContext(CaughtAnimalsContext);
-  const [flock, setFlock] = React.useState('');
+  const { allAnimals } = useContext(AllAnimalsContext);
+  const [flock, setFlock] = React.useState('All');
   const [searchPhrase, setSearchPhrase] = useState('');
 
+  const caughtIds = useMemo(() => {
+    return caughtAnimals.map((animal) => {
+      return animal.id;
+    });
+  }, [allAnimals, caughtAnimals]);
+
   const handleFlockChange = (text: string) => {
-    setFlock('');
     setFlock(text);
   };
+
+  const list = useMemo(() => {
+    if (searchPhrase === '' && flock === 'All') {
+      return allAnimals;
+    }
+    return allAnimals
+      .filter((animal) => {
+        return (searchPhrase !== "" && animal.name.toLowerCase().startsWith(searchPhrase.toLowerCase()))
+          || (flock !== "" && animal.flock.toLowerCase().startsWith(flock.toLowerCase()));
+      })
+  }, [searchPhrase, flock, allAnimals])
 
   return (
     <View style={styles.container}>
@@ -47,30 +68,13 @@ export default function CollectedAnimals() {
         </ScrollView>
       </View>
       <ScrollView
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
         contentContainerStyle={styles.animalsWrapper}>
-        {flock === 'All'
-          ? caughtAnimals
-              .filter((animal) => {
-                if (searchPhrase === '') {
-                  return animal;
-                }
-                return animal.name.toLowerCase().startsWith(searchPhrase.toLowerCase());
-              })
-              .map((animal, index) => {
-                return <Animal key={index} animal={animal.name} img={animal.pictureSrc} />;
-              })
-          : caughtAnimals
-              .filter((animal) => animal.flock === flock)
-              .filter((animal) => {
-                if (searchPhrase === '') {
-                  return animal;
-                }
-                return animal.name.toLowerCase().startsWith(searchPhrase.toLowerCase());
-              })
-              .map((animal) => (
-                <Animal key={animal.id} animal={animal.name} img={animal.pictureSrc} />
-              ))}
+        {
+          list.map((animal, index) => {
+            return <Animal key={index} animal={animal.name} img={animal.pictureSrc} enabled={caughtIds.indexOf(animal.id) < 0} />;
+          })
+        }
       </ScrollView>
     </View>
   );
@@ -117,13 +121,15 @@ const styles = StyleSheet.create({
     height: 50,
     backgroundColor: 'transparent'
   },
+  animalContainer: {
+    display: 'flex',
+  },
   animalsWrapper: {
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
-    // justifyContent: 'center',
-    flex: 1
+    justifyContent: 'center',
   },
   menuWrapperScroller: {
     display: 'flex',
