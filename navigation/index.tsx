@@ -16,6 +16,7 @@ import useColorScheme from '../hooks/useColorScheme';
 import AnimalDetails from '../screens/AnimalDetails';
 import CollectedAnimals from '../screens/CollectedAnimals';
 import ModalScreen from '../screens/ModalScreen';
+import PlayQuiz from '../screens/PlayQuizScreen'
 import NotFoundScreen from '../screens/NotFoundScreen';
 import ProfilePage from '../screens/ProfilePage';
 import TabTwoScreen from '../screens/TabTwoScreen';
@@ -110,6 +111,15 @@ function BottomTabNavigator() {
           title: 'Profil',
           headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />
+        }}
+      />
+      <BottomTab.Screen
+        name="Test"
+        component={PlayQuiz}
+        options={{
+          title: 'Test',
+          headerShown: false,
+          tabBarIcon: ({ color }) => <TabBarIcon name="test" color={color} />
         }}
       />
     </BottomTab.Navigator>
