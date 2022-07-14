@@ -6,7 +6,7 @@ import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 
 import { AllAnimalsContext, CaughtAnimalsContext } from '../App';
 import Animal from '../components/Animal';
 
-export default function CollectedAnimals() {
+export default function CollectedAnimals({navigation}) {
   const { caughtAnimals } = useContext(CaughtAnimalsContext);
   const { allAnimals } = useContext(AllAnimalsContext);
   const [flock, setFlock] = React.useState('All');
@@ -71,7 +71,7 @@ export default function CollectedAnimals() {
         contentContainerStyle={styles.animalsWrapper}>
         {
           list.map((animal, index) => {
-            return <Animal key={index} animal={animal.name} img={animal.pictureSrc} enabled={caughtIds.indexOf(animal.id) < 0} />;
+            return <Animal key={index} animal={animal} img={animal.pictureSrc} enabled={caughtIds.indexOf(animal.id) < 0} navigation={navigation} />;
           })
         }
       </ScrollView>

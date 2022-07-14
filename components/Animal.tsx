@@ -1,14 +1,26 @@
-import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import React, { useContext } from 'react';
+import { useCallback } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { CurrentAnimalContext } from '../App';
 
-export default function Animal(props: { animal: string; img: string; enabled: boolean }) {
+export default function Animal(props: { animal: string; img: string; enabled: boolean, navigation: any }) {
   const { animal, img, enabled } = props;
+  const { currentAnimal, setCurrentAnimal } = useContext(CurrentAnimalContext);
+  const navigation = useNavigation();
+
+  const openPopup = (animal) => {
+    setCurrentAnimal(animal);
+    navigation.navigate('AnimalDetails');
+  };
 
   return (
-    <View style={styles.container}>
-      <Image source={{ uri: img }} style={enabled ? styles.image : styles.imageEnabled} />
-      <Text style={styles.animalTitle}>{animal}</Text>
-    </View>
+    <TouchableOpacity onPress={() => openPopup(animal)}>
+      <View style={styles.container}>
+        <Image source={{ uri: img }} style={enabled ? styles.image : styles.imageEnabled} />
+        <Text style={styles.animalTitle}>{animal.name}</Text>
+      </View>
+    </TouchableOpacity>
   );
 }
 
