@@ -1,14 +1,16 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
-export default function CongratsScreen() {
+export default function ResultScreen() {
+
+let score = 0;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>CONGRATS!</Text>
-      <Text style={styles.paragraph}>You have collected a HUMAN!</Text>
+      <Text style={styles.title}>{score > 0 ? 'CONGRATS!' : 'OOPS!'}</Text>
+      <Text style={styles.paragraph}>{score > 0 ? 'You have collected a HUMAN!' : 'Your answer is incorrect!'}</Text>
       <TouchableOpacity style={styles.button} onPress={() => {}}>
-          <Text style={styles.buttonText}>Details</Text>
+          <Text style={styles.buttonText}>{score > 0 ? 'Details' : 'Try Again!'}</Text>
         </TouchableOpacity>
     </View>
   )
