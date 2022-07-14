@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Animal from '../components/Animal';
 
 export default function CollectedAnimals() {
   return (
@@ -8,13 +9,54 @@ export default function CollectedAnimals() {
       <TextInput style={styles.input} placeholder="Wyszukaj zwierzę" />
       <View style={styles.separator}>
         <Text style={styles.subtitle}>Kategoria</Text>
-        <Button
-          onPress={() => {}}
-          title="Zobacz wszystkie"
-          color="transparent"
-          accessibilityLabel="Zobacz wszystkie zwierzęta"
-        />
+        <TouchableOpacity style={styles.button} onPress={() => {}}>
+          <Text>Zobacz wszystkie</Text>
+        </TouchableOpacity>
       </View>
+      <View style={styles.menuWrapper}>
+        <ScrollView horizontal={true} contentContainerStyle={styles.menuWrapperScroller}>
+          <TouchableOpacity style={styles.spieceButton} onPress={() => {}}>
+            <Text>Ssaki</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.spieceButton} onPress={() => {}}>
+            <Text>Ptaki</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.spieceButton} onPress={() => {}}>
+            <Text>Płazy</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.spieceButton} onPress={() => {}}>
+            <Text>Ryby</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.spieceButton} onPress={() => {}}>
+            <Text>Gady</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.animalsWrapper}>
+        <Animal />
+        <Animal />
+        <Animal />
+        <Animal />
+        <Animal />
+        <Animal />
+        <Animal />
+        <Animal />
+        <Animal />
+        <Animal />
+        <Animal />
+        <Animal />
+        <Animal />
+        <Animal />
+        <Animal />
+        <Animal />
+        <Animal />
+        <Animal />
+        <Animal />
+        <Animal />
+        <Animal />
+      </ScrollView>
     </View>
   );
 }
@@ -22,7 +64,8 @@ export default function CollectedAnimals() {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    backgroundColor: '#fff'
   },
   input: {
     width: '80%',
@@ -31,12 +74,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderColor: '#9C9D9E',
     borderWidth: 2,
-    padding: 10
+    padding: 10,
+    color: '#000'
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#000',
     marginBottom: 33,
     marginTop: 33
   },
@@ -50,7 +94,35 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: '#fff',
+    color: '#000',
     fontWeight: 'bold'
+  },
+  menuWrapper: {
+    marginTop: 20,
+    height: 50,
+    backgroundColor: 'transparent'
+  },
+  animalsWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center'
+  },
+  menuWrapperScroller: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    width: '90%'
+  },
+  button: {
+    color: '#000'
+  },
+  spieceButtonActive: {
+    borderColor: '#0E443B',
+    borderRadius: 20,
+    borderWidth: 2,
+    padding: 10
   }
 });
