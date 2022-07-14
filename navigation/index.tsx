@@ -8,7 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Pressable } from 'react-native';
+import { ColorSchemeName, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Map from '../components/Map';
 
 import Colors from '../constants/Colors';
@@ -25,6 +25,7 @@ import TopScores from '../screens/TopScores';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 import ResultScreen from '../screens/ResultScreen';
+import { OptimizerConstructors } from '@tensorflow/tfjs';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -56,18 +57,92 @@ function RootNavigator() {
   );
 }
 
+
+function MyTabBar({ state, descriptors, navigation }) {
+  return (
+    <View style={{ flexDirection: 'row', backgroundColor: "#ffffff", height: 70, borderRadius: 50, justifyContent: "center", alignItems: "center" }}>
+      {state.routes.map((route, index) => {
+        const { options } = descriptors[route.key];
+        console.log(options);
+        const label =
+          options.tabBarLabel !== undefined
+            ? options.tabBarLabel
+            : options.title !== undefined
+              ? options.title
+              : route.name;
+
+        const isFocused = state.index === index;
+
+        const onPress = () => {
+          const event = navigation.emit({
+            type: 'tabPress',
+            target: route.key,
+          });
+
+          if (!isFocused && !event.defaultPrevented) {
+            navigation.navigate(route.name);
+          }
+        };
+
+        const onLongPress = () => {
+          navigation.emit({
+            type: 'tabLongPress',
+            target: route.key,
+          });
+        };
+        let image = require("../assets/images/menu_map.png");
+        if(options.imageSrc == 'star'){
+          image = require("../assets/images/menu_star.png");
+        }
+        if(options.imageSrc == 'trophy'){
+          image = require("../assets/images/menu_trophy.png");
+        }
+        if(options.imageSrc == 'photo'){
+          image = require("../assets/images/menu_photo.png");
+        }
+        if(options.imageSrc == 'profile'){
+          image = require("../assets/images/menu_profile.png");
+        }
+
+        return (
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityStates={isFocused ? ['selected'] : []}
+            accessibilityLabel={options.tabBarAccessibilityLabel}
+            testID={options.tabBarTestID}
+            onPress={onPress}
+            onLongPress={onLongPress}
+            style={{ flex: 1, alignItems: "center" }}
+          >
+            <View>
+              <Image source={image} />
+            </View>
+
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
+}
+
 /**
  * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
  * https://reactnavigation.org/docs/bottom-tab-navigator
  */
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
+const styles = StyleSheet.create({
+  menuWrapper: {
+    backgroundColor: '#ffffff',
+  },
+});
 
 function BottomTabNavigator() {
   const colorScheme = useColorScheme();
 
   return (
     <BottomTab.Navigator
-      initialRouteName="Trophies"
+      tabBar={props => <MyTabBar {...props} />}
+      initialRouteName="Camera"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint
       }}>
@@ -77,53 +152,44 @@ function BottomTabNavigator() {
         options={({ navigation }: RootTabScreenProps<'Trophies'>) => ({
           title: 'Trofea',
           headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="trophy" color={color} />
+          imageSrc: 'trophy'
         })}
       />
       <BottomTab.Screen
         name="Ranking"
         component={TopScores}
-        options={{
+        options={({ navigation }: RootTabScreenProps<'Ranking'>) => ({
           title: 'Ranking',
           headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="star" color={color} />
-        }}
+          imageSrc: 'star'
+        })}
       />
       <BottomTab.Screen
         name="Camera"
         component={TabTwoScreen}
-        options={{
+        options={({ navigation }: RootTabScreenProps<'Camera'>) => ({
           title: 'Aparat',
           headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="camera" color={color} />
-        }}
+          imageSrc: 'photo'
+        })}
       />
       <BottomTab.Screen
         name="Map"
         component={Map}
-        options={{
+        options={({ navigation }: RootTabScreenProps<'Map'>) => ({
           title: 'Mapa',
           headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="map" color={color} />
-        }}
+          imageSrc: 'map'
+        })}
       />
       <BottomTab.Screen
         name="Profile"
         component={ProfilePage}
-        options={{
+        options={({ navigation }: RootTabScreenProps<'Profile'>) => ({
           title: 'Profil',
           headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />
-        }}
-      />
-      <BottomTab.Screen
-        name="Test"
-        component={PlayQuiz}
-        options={{
-          title: 'Test',
-          headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="dot-circle-o" color={color} />
-        }}
+          imageSrc: 'profile'
+        })}
       />
     </BottomTab.Navigator>
   );

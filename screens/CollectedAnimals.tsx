@@ -2,7 +2,6 @@
 
 import React, { useContext, useState } from 'react';
 import { useMemo } from 'react';
-import { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { AllAnimalsContext, CaughtAnimalsContext } from '../App';
 import Animal from '../components/Animal';
