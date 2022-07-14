@@ -17,6 +17,7 @@ import AnimalDetails from '../screens/AnimalDetails';
 import CollectedAnimals from '../screens/CollectedAnimals';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
+import ProfilePage from '../screens/ProfilePage';
 
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
@@ -100,15 +101,15 @@ function BottomTabNavigator() {
           tabBarIcon: ({ color }) => <TabBarIcon name="map" color={color} />
         }}
       />
-        <BottomTab.Screen
-          name="Profile"
-          component={AnimalDetails}
-          options={{
-            title: 'Profil',
-            headerShown: false,
-            tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />
-          }}
-        />
+      <BottomTab.Screen
+        name="Profile"
+        component={ProfilePage}
+        options={{
+          title: 'Profil',
+          headerShown: false,
+          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />
+        }}
+      />
     </BottomTab.Navigator>
   );
 }
