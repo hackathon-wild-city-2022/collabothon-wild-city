@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { fetchAllAnimal, fetchCaightAnimals } from './hooks/state';
+import { fetchAllAnimal, fetchCaughtAnimals } from './hooks/state';
 
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
@@ -32,7 +32,7 @@ export default function App() {
       console.log("asdf");
       getDeviceId();
       setAllAnimals(await fetchAllAnimal(deviceId));
-      setCaughtAnimals(await fetchCaightAnimals(deviceId));
+      setCaughtAnimals(await fetchCaughtAnimals(deviceId));
     })();
   }, []);
 

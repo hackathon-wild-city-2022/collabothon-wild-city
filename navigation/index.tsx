@@ -28,10 +28,9 @@ import ResultScreen from '../screens/ResultScreen';
 import { OptimizerConstructors } from '@tensorflow/tfjs';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
-  
+
   return (
     <NavigationContainer
-      linking={LinkingConfiguration}
       theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <RootNavigator />
     </NavigationContainer>
@@ -48,6 +47,7 @@ function RootNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
+      <Stack.Screen name="Camera" component={TabTwoScreen} options={{ title: 'Camera' }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Screen name="ResultScreen" component={ResultScreen} options={{ title: 'ResultScreen' }} />
       <Stack.Screen name="PlayQuiz" component={PlayQuiz} options={{ title: 'PlayQuiz' }} />
@@ -92,16 +92,16 @@ function MyTabBar({ state, descriptors, navigation }) {
           });
         };
         let image = require("../assets/images/menu_map.png");
-        if(options.imageSrc == 'star'){
+        if (options.imageSrc == 'star') {
           image = require("../assets/images/menu_star.png");
         }
-        if(options.imageSrc == 'trophy'){
+        if (options.imageSrc == 'trophy') {
           image = require("../assets/images/menu_trophy.png");
         }
-        if(options.imageSrc == 'photo'){
+        if (options.imageSrc == 'photo') {
           image = require("../assets/images/menu_photo.png");
         }
-        if(options.imageSrc == 'profile'){
+        if (options.imageSrc == 'profile') {
           image = require("../assets/images/menu_profile.png");
         }
 
@@ -142,6 +142,8 @@ function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
+      detachInactiveScreens={true}
+      
       tabBar={props => <MyTabBar {...props} />}
       initialRouteName="Camera"
       screenOptions={{
@@ -171,6 +173,7 @@ function BottomTabNavigator() {
         options={({ navigation }: RootTabScreenProps<'Camera'>) => ({
           title: 'Aparat',
           headerShown: false,
+          unmountOnBlur: true,
           imageSrc: 'photo'
         })}
       />

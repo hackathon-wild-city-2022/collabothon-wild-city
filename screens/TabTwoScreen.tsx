@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { StyleSheet, Text, View, Platform, TouchableOpacity } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as tf from '@tensorflow/tfjs';
@@ -8,6 +8,7 @@ import { getLabels, getPredictions, loadModel } from './ImageRecognition';
 import { AllAnimalsContext, CurrentAnimalContext } from '../App';
 import { useNavigation } from '@react-navigation/native';
 import { useCallback } from 'react';
+import { ExpoWebGLRenderingContext } from 'expo-gl';
 
 const textureDims =
   Platform.OS === 'ios'
@@ -30,6 +31,7 @@ const initialiseTensorflow = async () => {
 };
 
 export default function TabTwoScreen() {
+  const cameraRef = useRef(null);
   const { currentAnimal, setCurrentAnimal } = useContext(CurrentAnimalContext);
   const { allAnimals } = useContext(AllAnimalsContext);
   const navigation = useNavigation();
@@ -42,14 +44,17 @@ export default function TabTwoScreen() {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === 'granted');
-      await initialiseTensorflow(); 
+      await initialiseTensorflow();
       setModel(await loadModel());
     })();
+    return () => {
+      setModel(null);
+      setHasPermission(false);
+    }
   }, []);
 
   const setAnimalContext = useCallback((animalName) => {
     const animal = allAnimals.filter((a) => a.aiName == animalName);
-    console.log(animal.length);
     if (animal.length > 0) {
       setCurrentAnimal(animal[0]);
     } else {
@@ -63,7 +68,7 @@ export default function TabTwoScreen() {
     }
   }
 
-  const getPredictionsHandler = async (images: IterableIterator<tf.Tensor3D>, updatePreview, gl) => {
+  const getPredictionsHandler = async (images: IterableIterator<tf.Tensor3D>, updatePreview: () => void, gl: ExpoWebGLRenderingContext) => {
     await initialiseTensorflow();
     setModel(await loadModel());
 
@@ -91,13 +96,11 @@ export default function TabTwoScreen() {
           } else {
             setDetections([]);
           }
-          tf.dispose([nextImageTensor]);
         }
       }
+      tf.dispose([nextImageTensor]);
       frameCount += 1;
       frameCount = frameCount % makePredictionsEveryNFrames;
-      updatePreview();
-      gl.endFrameEXP();
       requestAnimationFrameId = requestAnimationFrame(loop);
     }
     loop();
@@ -105,7 +108,7 @@ export default function TabTwoScreen() {
 
   useEffect(() => {
     return () => {
-      // cancelAnimationFrame(requestAnimationFrameId);
+      cancelAnimationFrame(requestAnimationFrameId);
     };
   }, [requestAnimationFrameId]);
 
@@ -119,11 +122,10 @@ export default function TabTwoScreen() {
   return (
     <View style={styles.container}>
       <TensorCamera
+        ref={cameraRef}
         style={styles.camera}
         onReady={getPredictionsHandler}
-        type={Camera.Constants.Type.back}
-        cameraTextureWidth={textureDims.width}
-        cameraTextureHeight={textureDims.height}
+        type={Camera.Constants.Type.back} 
 
         resizeHeight={300}
         resizeWidth={152}
@@ -146,19 +148,19 @@ export default function TabTwoScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-
+    // backgroundColor: "red",
+    flex: 1, 
     alignItems: 'center',
-
     justifyContent: 'center'
   },
   text: {
-    flex: 1
+    flex: 1, 
     // backgroundColor: '#fff',
     // color: 'red',
   },
   textRed: {
-    color: 'red'
+    color: 'red',
+    fontSize: 24,
   },
   camera: {
     flex: 10,
