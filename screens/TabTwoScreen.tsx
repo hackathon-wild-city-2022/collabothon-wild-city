@@ -4,7 +4,7 @@ import { Camera } from 'expo-camera';
 import * as tf from '@tensorflow/tfjs';
 import * as mobilenet from '@tensorflow-models/mobilenet';
 import { cameraWithTensors } from '@tensorflow/tfjs-react-native';
-import { getPredictions, loadModel } from './ImageRecognition';
+import { getLabels, getPredictions } from './ImageRecognition';
 
 const textureDims =
   Platform.OS === 'ios'
@@ -21,13 +21,14 @@ let frame = 0;
 const computeRecognitionEveryNFrames = 60;
 
 const TensorCamera = cameraWithTensors(Camera);
+const classLabels = getLabels();
 
 const initialiseTensorflow = async () => {
   await tf.ready();
   tf.getBackend();
 };
 
-export default function App() {
+export default function TabTwoScreen() {
   const [hasPermission, setHasPermission] = useState<null | boolean>(null);
   const [detections, setDetections] = useState<string[]>([]);
   const [model, setModel] = useState<any>();
@@ -68,19 +69,22 @@ export default function App() {
   const getPredictionsHandler = async (images: IterableIterator<tf.Tensor3D>) => {
 
     let frameCount = 0;
-    let makePredictionsEveryNFrames = 10;
+    let makePredictionsEveryNFrames = 50;
     const loop = async () => {
-      const nextImageTensor = images.next().value
+      const nextImageTensor = images.next().value;
 
-      // console.log("nextImageTensor", nextImageTensor);
       if (nextImageTensor) {
         if (frameCount % makePredictionsEveryNFrames === 0) {
           const predictions = await getPredictions(nextImageTensor);
-          console.log("predictions", predictions);
+          // console.log("predictions", predictions);
+
+          if(Math.max(...predictions) > 0.9){
+            const maxKey = predictions.indexOf(Math.max(...predictions));
+            console.log("maxKey", classLabels[maxKey]);
+            setDetections([classLabels[maxKey]]);
+          }
         }
-        // updatePreview();
-        // gl.endFrameEXP();
-      }
+      }  
       frameCount += 1;
       frameCount = frameCount % makePredictionsEveryNFrames;
       requestAnimationFrame(loop);
