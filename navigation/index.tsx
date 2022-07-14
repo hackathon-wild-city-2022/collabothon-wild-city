@@ -28,6 +28,7 @@ import ResultScreen from '../screens/ResultScreen';
 import { OptimizerConstructors } from '@tensorflow/tfjs';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
+  
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
@@ -61,10 +62,9 @@ function RootNavigator() {
 
 function MyTabBar({ state, descriptors, navigation }) {
   return (
-    <View style={{ flexDirection: 'row', backgroundColor: "#ffffff", height: 70, borderRadius: 50, justifyContent: "center", alignItems: "center" }}>
+    <View key={"asdf"} style={{ flexDirection: 'row', backgroundColor: "#ffffff", height: 70, borderRadius: 50, justifyContent: "center", alignItems: "center" }}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
-        console.log(options);
         const label =
           options.tabBarLabel !== undefined
             ? options.tabBarLabel
@@ -106,7 +106,7 @@ function MyTabBar({ state, descriptors, navigation }) {
         }
 
         return (
-          <TouchableOpacity
+          <TouchableOpacity key={index}
             accessibilityRole="button"
             accessibilityStates={isFocused ? ['selected'] : []}
             accessibilityLabel={options.tabBarAccessibilityLabel}

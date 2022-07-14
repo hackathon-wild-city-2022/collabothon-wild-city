@@ -129,6 +129,8 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 200,
+    paddingBottom: 250,
   },
   menuWrapperScroller: {
     display: 'flex',

@@ -1,19 +1,18 @@
-//@ts-nocheck
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { fetchAllAnimal, fetchCaightAnimals } from './hooks/state';
 
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 
-export const CurrentAnimalContext = createContext({});
+export const CurrentAnimalContext = createContext(null);
 export const CorrectAnswerContext = createContext({});
 export const AllAnimalsContext = createContext({});
 export const CaughtAnimalsContext = createContext({});
-export const DeviceIdContext = createContext({});
+export const DeviceIdContext = createContext("");
 export const CurrentUserContext = createContext({});
 export const QuizQuestionsContext = createContext({});
 
@@ -30,8 +29,8 @@ export default function App() {
 
   useEffect(() => {
     getDeviceId();
-    fetchData();
-    fetchAllAnimal();
+    setAllAnimals(fetchAllAnimal(deviceId));
+    setCaughtAnimals(fetchCaightAnimals(deviceId));
   }, [deviceId]);
 
   const getDeviceId = async () => {
@@ -45,26 +44,6 @@ export default function App() {
       await AsyncStorage.setItem('deviceId', device);
       console.log("Unique ID:" + device);
     }
-  };
-
-  const fetchAllAnimal = async () => {
-    const options = { method: 'GET', headers: { 'x-client-id': deviceId } };
-    const response = await fetch('http://zoo.dwiegodzinydonikad.pl/animals/all', options);
-    const data = await response.json();
-    setAllAnimals(data);
-  };
-  const fetchData = async () => {
-    const options = { method: 'GET', headers: { 'x-client-id': deviceId } };
-    const response = await fetch('http://zoo.dwiegodzinydonikad.pl/animals/unlocked', options);
-    const data = await response.json();
-    setCaughtAnimals(data);
-  };
-
-  const fetchQuizQuestionsData = async (animalId) => {
-    const options = { method: 'GET', headers: { 'x-client-id': deviceId } };
-    const response = await fetch('http://zoo.dwiegodzinydonikad.pl/question/' + animalId, options);
-    const data = await response.json();
-    setQuizQuestions(data);
   };
 
   if (!isLoadingComplete) {

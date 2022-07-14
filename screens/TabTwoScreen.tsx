@@ -1,12 +1,13 @@
-//@ts-nocheck
-
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Platform } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { StyleSheet, Text, View, Platform, TouchableOpacity } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as tf from '@tensorflow/tfjs';
 import * as mobilenet from '@tensorflow-models/mobilenet';
 import { cameraWithTensors } from '@tensorflow/tfjs-react-native';
 import { getLabels, getPredictions, loadModel } from './ImageRecognition';
+import { AllAnimalsContext, CurrentAnimalContext } from '../App';
+import { useNavigation } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 const textureDims =
   Platform.OS === 'ios'
@@ -29,6 +30,10 @@ const initialiseTensorflow = async () => {
 };
 
 export default function TabTwoScreen() {
+  const { currentAnimal, setCurrentAnimal } = useContext(CurrentAnimalContext);
+  const { allAnimals } = useContext(AllAnimalsContext);
+  const navigation = useNavigation();
+
   const [hasPermission, setHasPermission] = useState<null | boolean>(null);
   const [detections, setDetections] = useState<string[]>([]);
   const [model, setModel] = useState<any>();
@@ -41,6 +46,22 @@ export default function TabTwoScreen() {
       setModel(await loadModel());
     })();
   }, []);
+
+  const setAnimalContext = useCallback((animalName) => {
+    const animal = allAnimals.filter((a) => a.aiName == animalName);
+    console.log(animal.length);
+    if (animal.length > 0) {
+      setCurrentAnimal(animal[0]);
+    } else {
+      setCurrentAnimal(null);
+    }
+  }, [allAnimals]);
+
+  const openPopup = () => {
+    if (currentAnimal) {
+      navigation.navigate('PlayQuiz');
+    }
+  }
 
   const getPredictionsHandler = async (images: IterableIterator<tf.Tensor3D>, updatePreview, gl) => {
     await initialiseTensorflow();
@@ -63,9 +84,10 @@ export default function TabTwoScreen() {
             console.log("maxKey", classLabels[maxKey], Math.max(...predictions));
             if (classLabels[maxKey] != "other") {
               setDetections([classLabels[maxKey]]);
+              setAnimalContext(classLabels[maxKey]);
             } else {
               setDetections([]);
-            } 
+            }
           } else {
             setDetections([]);
           }
@@ -109,13 +131,15 @@ export default function TabTwoScreen() {
         autorender={true}
         useCustomShadersToResize={false}
       />
-      <View style={styles.text}>
-        {detections.map((detection, index) => (
-          <Text style={styles.textRed} key={index}>
-            {detection}
-          </Text>
-        ))}
-      </View>
+      <TouchableOpacity onPress={openPopup} style={styles.text}>
+        <View style={styles.text}>
+          {detections.map((detection, index) => (
+            <Text style={styles.textRed} key={index}>
+              {detection}
+            </Text>
+          ))}
+        </View>
+      </TouchableOpacity>
     </View>
   );
 }
