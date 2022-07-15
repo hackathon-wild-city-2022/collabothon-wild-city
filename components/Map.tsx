@@ -1,10 +1,14 @@
 import React from 'react';
-import { Image, ScrollView } from 'react-native';
+import { Image, ScrollView, View } from 'react-native';
+// @ts-ignore
+import MapAsSvg from '../assets/images/zoo_map.svg';
 
 export default function Map() {
   return (
-    <ScrollView style={{ flex: 1 }} horizontal={true}>
-      <Image style={{ width: 2099 }} source={require('../assets/images/map.png')} />
+    <ScrollView style={{ flex: 1, overflowY: 'scroll' }} directionalLockEnabled={false} horizontal={true}>
+        <ScrollView nestedScrollEnabled={true}>
+            <MapAsSvg width="2099"/>
+        </ScrollView>
     </ScrollView>
   );
 }
