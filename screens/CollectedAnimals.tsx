@@ -1,10 +1,13 @@
 //@ts-nocheck
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { AllAnimalsContext, CaughtAnimalsContext } from '../App';
 import Animal from '../components/Animal';
+import { Notification } from '../components/Notification';
+import { showNotification } from '../components/Notification';
+// import useEffect from 'react';
 
 export default function CollectedAnimals({ navigation }) {
   const { caughtAnimals } = useContext(CaughtAnimalsContext);
@@ -31,16 +34,18 @@ export default function CollectedAnimals({ navigation }) {
     if (searchPhrase === '' && flock === 'All') {
       return allAnimals;
     }
-    return allAnimals
-      .filter((animal) => {
-        return (searchPhrase !== "" && animal.name.toLowerCase().startsWith(searchPhrase.toLowerCase()))
-          || (flock !== "" && animal.flock.toLowerCase().startsWith(flock.toLowerCase()));
-      })
-  }, [searchPhrase, flock, allAnimals])
+    return allAnimals.filter((animal) => {
+      return (
+        (searchPhrase !== '' && animal.name.toLowerCase().startsWith(searchPhrase.toLowerCase())) ||
+        (flock !== '' && animal.flock.toLowerCase().startsWith(flock.toLowerCase()))
+      );
+    });
+  }, [searchPhrase, flock, allAnimals]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Collected animals</Text>
+      <Notification />
       <TextInput
         style={styles.input}
         placeholder="Search animal by name"
@@ -48,7 +53,12 @@ export default function CollectedAnimals({ navigation }) {
       />
       <View style={styles.separator}>
         <Text style={styles.subtitle}>Category</Text>
-        <TouchableOpacity style={styles.button} onPress={() => handleFlockChange('All')}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            handleFlockChange('All');
+            showNotification();
+          }}>
           <Text>View all</Text>
         </TouchableOpacity>
       </View>
@@ -71,14 +81,18 @@ export default function CollectedAnimals({ navigation }) {
           </TouchableOpacity>
         </ScrollView>
       </View>
-      <ScrollView
-        showsVerticalScrollIndicator={true}
-        contentContainerStyle={styles.animalsWrapper}>
-        {
-          list.map((animal, index) => {
-            return <Animal key={index} animal={animal} img={animal.pictureSrc} enabled={caughtIds.indexOf(animal.id) < 0} navigation={navigation} />;
-          })
-        }
+      <ScrollView showsVerticalScrollIndicator={true} contentContainerStyle={styles.animalsWrapper}>
+        {list.map((animal, index) => {
+          return (
+            <Animal
+              key={index}
+              animal={animal}
+              img={animal.pictureSrc}
+              enabled={caughtIds.indexOf(animal.id) < 0}
+              navigation={navigation}
+            />
+          );
+        })}
       </ScrollView>
     </View>
   );
@@ -126,7 +140,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent'
   },
   animalContainer: {
-    display: 'flex',
+    display: 'flex'
   },
   animalsWrapper: {
     display: 'flex',
@@ -135,7 +149,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 200,
-    paddingBottom: 250,
+    paddingBottom: 250
   },
   menuWrapperScroller: {
     display: 'flex',
