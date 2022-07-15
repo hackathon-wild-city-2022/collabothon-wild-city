@@ -42,6 +42,10 @@ export default function PlayQuiz({ navigation }) {
     const { deviceIdContext, setDeviceIdContext } = useContext(DeviceIdContext);
     const [allQuestions, setAllQuestions] = useState<any>([]);
 
+    if (currentAnimal == null) {
+        navigation.navigate("Camera");
+    }
+
     useEffect(() => {
         (async () => {
             const data = await fetchQuestion("asdf", currentAnimal.id);
