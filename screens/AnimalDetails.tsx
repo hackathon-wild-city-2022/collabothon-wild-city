@@ -1,4 +1,6 @@
-import React, { useContext } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import React, { useContext, useEffect } from 'react';
+import { Button, Image } from 'react-native';
 import {
   ImageBackground,
   ScrollView,
@@ -17,6 +19,14 @@ const image = {
 
 export default function AnimalDetails() {
   const { currentAnimal } = useContext(CurrentAnimalContext);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    window.onpopstate = e => {
+      navigation.navigate('Trophies');
+      e.preventDefault();
+    };
+  });
 
   return (
     <View style={styles.container}>
@@ -25,15 +35,26 @@ export default function AnimalDetails() {
           source={{ uri: currentAnimal.pictureSrc }}
           resizeMode="cover"
           style={styles.image}>
-          <Text style={styles.headerContainerTitle}>{currentAnimal.name}</Text>
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "flex-end" }}>
+              <TouchableOpacity onPress={() => navigation.navigate('Trophies')}>
+                <Image source={require("../assets/images/arrow_left.png")} width={10} height={20} style={{ width: 10, height: 20, margin: 10 }}></Image>
+              </TouchableOpacity>
+            </View>
+            <View style={{ flex: 10 }}>
+              <Text style={styles.headerContainerTitle}>{currentAnimal.name}</Text>
+            </View>
+            <View style={{ flex: 1 }}></View>
+
+          </View>
         </ImageBackground>
-      </View>
+      </View >
       <View style={styles.detailsContainer}>
         <AnimalDetailsText extinctionRisk={currentAnimal.threatLevel} />
         <View style={styles.detailsSmallContainer}>
-          <AnimalDetailsTextSmall text={currentAnimal.weight || currentAnimal.flock} />
-          <AnimalDetailsTextSmall text={currentAnimal.width || currentAnimal.flock} />
-          <AnimalDetailsTextSmall text={currentAnimal.height || currentAnimal.flock} />
+          <AnimalDetailsTextSmall text={currentAnimal.weight || currentAnimal.flock} icon="mass" />
+          <AnimalDetailsTextSmall text={currentAnimal.width || currentAnimal.flock} icon="width" />
+          <AnimalDetailsTextSmall text={currentAnimal.height || currentAnimal.flock} icon="height" />
         </View>
       </View>
       <View style={styles.descriptionContainer}>
@@ -42,11 +63,11 @@ export default function AnimalDetails() {
         </ScrollView>
       </View>
       <View style={styles.footerContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => {}}>
+        <TouchableOpacity style={styles.button} onPress={() => { }}>
           <Text style={styles.buttonText}>Donate</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </View >
   );
 }
 
@@ -91,7 +112,10 @@ const styles = StyleSheet.create({
     padding: 30
   },
   description: {
-    fontSize: 16
+    fontSize: 16,
+    fontWeight: '300',
+    lineHeight: 24,
+    color: '#0E443B',
   },
   footerContainer: {
     flex: 2,
@@ -110,7 +134,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 30,
+    fontSize: 20,
     textAlign: 'center',
     lineHeight: 60
   }

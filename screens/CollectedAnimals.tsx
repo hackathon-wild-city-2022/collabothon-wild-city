@@ -6,20 +6,21 @@ import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 
 import { AllAnimalsContext, CaughtAnimalsContext } from '../App';
 import Animal from '../components/Animal';
 
-export default function CollectedAnimals({navigation}) {
+export default function CollectedAnimals({ navigation }) {
   const { caughtAnimals } = useContext(CaughtAnimalsContext);
   const { allAnimals } = useContext(AllAnimalsContext);
   const [flock, setFlock] = React.useState('All');
   const [searchPhrase, setSearchPhrase] = useState('');
 
   const caughtIds = useMemo(() => {
-    if(!caughtAnimals){
+    if (!caughtAnimals) {
       return [];
     }
     return caughtAnimals.map((animal) => {
       return animal.id;
     });
   }, [allAnimals, caughtAnimals]);
+  console.log('caughtIds', caughtIds);
 
   const handleFlockChange = (text: string) => {
     setFlock(text);
