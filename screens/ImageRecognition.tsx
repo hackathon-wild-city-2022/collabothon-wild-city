@@ -1,9 +1,8 @@
 //@ts-nocheck
 
+import * as mobilenet from '@tensorflow-models/mobilenet';
+import * as cocossd from '@tensorflow-models/coco-ssd';
 import * as tf from '@tensorflow/tfjs';
-import { bundleResourceIO, decodeJpeg } from '@tensorflow/tfjs-react-native';
-import * as FileSystem from 'expo-file-system';
-import { useMemo } from 'react';
 
 class L2 {
   static className = 'L2';
@@ -27,6 +26,8 @@ export const loadModel = async () => {
       console.log('[LOADING ERROR] info:', e);
     });
   console.log("Model loaded from: http://zoo.dwiegodzinydonikad.pl/model.json ");
+  // model = await mobilenet.load();
+  // model = await cocossd.load();
   return model;
 };
 
@@ -41,19 +42,14 @@ export const getLabels = () => {
   return [
     'anoa',
     'bear',
-    'boar',
     'crocodile',
-    'duck',
     'elephant',
     'fish',
     'makak',
-    'orangutan',
     'ostrish',
     'other',
-    'otter',
     'pinguin',
     'shark',
-    'stingray',
-    'wikunia'
+    'stingray'
   ];
 }

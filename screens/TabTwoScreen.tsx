@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
-import { StyleSheet, Text, View, Platform, TouchableOpacity } from 'react-native';
-import { Camera } from 'expo-camera';
-import * as tf from '@tensorflow/tfjs';
-import * as mobilenet from '@tensorflow-models/mobilenet';
-import { cameraWithTensors } from '@tensorflow/tfjs-react-native';
-import { getLabels, getPredictions, loadModel } from './ImageRecognition';
-import { AllAnimalsContext, CurrentAnimalContext } from '../App';
 import { useNavigation } from '@react-navigation/native';
-import { useCallback } from 'react';
+import * as tf from '@tensorflow/tfjs';
+import { cameraWithTensors } from '@tensorflow/tfjs-react-native';
+import { Camera } from 'expo-camera';
 import { ExpoWebGLRenderingContext } from 'expo-gl';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { Animated, Easing, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { AllAnimalsContext, CurrentAnimalContext } from '../App';
+import { getLabels, getPredictions, loadModel } from './ImageRecognition';
 
 const textureDims =
   Platform.OS === 'ios'
@@ -81,8 +79,22 @@ export default function TabTwoScreen() {
         if (frameCount % makePredictionsEveryNFrames === 0) {
           const predictions = await getPredictions(model, nextImageTensor);
 
-          // const merged = classLabels.reduce((obj, key, index) => ({ ...obj, [key]: predictions[index] }), {});
-          // console.log(merged);
+          // const objects = await model.detect(nextImageTensor);
+          // console.log(objects);
+          // const detected = objects
+          //   // .filter(o => o.probability > 0.5)
+          //   .sort((a, b) => { return b.score - a.score; })
+          //   .filter((a) => {
+          //     return classLabels.filter((b) => {
+          //       return a.class == b;
+          //     }).length > 0
+          //   })
+          //   .map((object: any) => object.class)
+          // setDetections(detected);
+          // console.log(detected);
+
+          const merged = classLabels.reduce((obj, key, index) => ({ ...obj, [key]: predictions[index] }), {});
+          console.log(merged);
 
           if (Math.max(...predictions) > 0.9) {
             const maxKey = predictions.indexOf(Math.max(...predictions));
@@ -102,6 +114,8 @@ export default function TabTwoScreen() {
       frameCount += 1;
       frameCount = frameCount % makePredictionsEveryNFrames;
       requestAnimationFrameId = requestAnimationFrame(loop);
+      // updatePreview();
+      // gl.endFrameEXP();
     }
     loop();
   }
@@ -125,7 +139,7 @@ export default function TabTwoScreen() {
         ref={cameraRef}
         style={styles.camera}
         onReady={getPredictionsHandler}
-        type={Camera.Constants.Type.back} 
+        type={Camera.Constants.Type.back}
 
         resizeHeight={300}
         resizeWidth={152}
@@ -149,12 +163,12 @@ export default function TabTwoScreen() {
 const styles = StyleSheet.create({
   container: {
     // backgroundColor: "red",
-    flex: 1, 
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
   },
   text: {
-    flex: 1, 
+    flex: 1,
     // backgroundColor: '#fff',
     // color: 'red',
   },
