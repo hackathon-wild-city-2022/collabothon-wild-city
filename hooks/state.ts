@@ -25,3 +25,10 @@ export const fetchQuestion = async (deviceId: string, animalId: string) => {
     const response = await fetch('http://zoo.dwiegodzinydonikad.pl/question/' + animalId, options);
     return await response.json();
 };
+
+export const unlockAnimal = async (deviceId: string, animalId: string) => {
+    console.log("unlockAnimal", deviceId, animalId);
+    const options = { method: 'POST', headers: { 'x-client-id': deviceId } };
+    const response = await fetch('http://zoo.dwiegodzinydonikad.pl/account/unlock/' + animalId, options);
+    return await response.json();
+};

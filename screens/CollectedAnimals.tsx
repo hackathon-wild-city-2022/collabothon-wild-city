@@ -13,6 +13,7 @@ export default function CollectedAnimals({ navigation }) {
   const [searchPhrase, setSearchPhrase] = useState('');
 
   const caughtIds = useMemo(() => {
+    console.log(caughtAnimals);
     if (!caughtAnimals) {
       return [];
     }

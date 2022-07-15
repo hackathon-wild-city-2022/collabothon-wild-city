@@ -1,14 +1,29 @@
-import React, { useContext } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { StyleSheet, Text, Image, View, TouchableOpacity } from 'react-native';
-import { CorrectAnswerContext, CurrentAnimalContext } from '../App';
+import React, { useContext } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { CaughtAnimalsContext, CorrectAnswerContext, CurrentAnimalContext, DeviceIdContext } from '../App';
+import { fetchCaughtAnimals, unlockAnimal } from '../hooks/state';
 
 export default function ResultScreen() {
   const answer: any = useContext(CorrectAnswerContext);
+  const currentAnimal: any = useContext(CurrentAnimalContext);
+  const caughtAnimals: any = useContext(CaughtAnimalsContext);
+  const deviceId: any = useContext(DeviceIdContext);
   const correctAnswerImage = require('../assets/images/correctAnswer.png');
   const wrongAnswerImage = require('../assets/images/wrongAnswer.png');
   const navigation = useNavigation();
-  const { currentAnimal } = useContext(CurrentAnimalContext);
+
+  const handleButtonPress = () => {
+    if (answer.correctAnswer) {
+      (async () => {
+        unlockAnimal(deviceId.deviceId, currentAnimal.currentAnimal.id);
+        caughtAnimals.setCaughtAnimals(await fetchCaughtAnimals(deviceId.deviceId));
+        navigation.navigate('AnimalDetails');
+      })();
+    } else {
+      navigation.navigate('PlayQuiz')
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -20,11 +35,7 @@ export default function ResultScreen() {
       />
       <TouchableOpacity
         style={styles.button}
-        onPress={() =>
-          answer.correctAnswer
-            ? navigation.navigate('AnimalDetails')
-            : navigation.navigate('PlayQuiz')
-        }>
+        onPress={handleButtonPress}>
         <Text style={styles.buttonText}>{answer.correctAnswer ? 'Add to collection' : 'Try Again'}</Text>
       </TouchableOpacity>
       {
