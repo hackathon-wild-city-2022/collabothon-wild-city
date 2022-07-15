@@ -1,23 +1,20 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     ImageBackground,
     View,
     Text,
     SafeAreaView,
     StatusBar,
-    Image,
     TouchableOpacity,
     Modal,
     Animated,
     StyleSheet,
-    Button
+    Button,
+    Image
 } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import ResultScreen from './ResultScreen';
-import Navigation from '../navigation';
-import { CorrectAnswerContext, CurrentAnimalContext } from '../App';
-import Colors from '../constants/Colors';
+import { CorrectAnswerContext, CurrentAnimalContext, DeviceIdContext } from '../App';
+import { fetchQuestion } from '../hooks/state';
 
 //import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -29,30 +26,9 @@ const QuizData = [
         options: ['Jupiter', 'Saturn', 'Neptune', 'Mercury'],
         correct_option: 'Jupiter'
     }
-    // {
-    //     question: "What attraction in India is one of the famus in the world?",
-    //     options: ["Chand Minar", "Taj Mahal", "Stadium"],
-    //     correct_option: "Taj Mahal"
-    // },
-    // {
-    //     question: "What land animal can open its mouth the widest?",
-    //     options: ["Alligator", "Crocodile", "Baboon", "Hippo"],
-    //     correct_option: "Hippo"
-    // },
-    // {
-    //     question: "What is the largest animal on Earth?",
-    //     options: ["The African elephant", "The blue whale", "The sperm whale", "The giant squid"],
-    //     correct_option: "The blue whale"
-    // },
-    // {
-    //     question: "What is the only flying mammal?",
-    //     options: ["The bat", "The flying squirrel", "The bald eagle", "The colugo"],
-    //     correct_option: "The bat"
-    // }
 ];
 
 export default function PlayQuiz({ navigation }) {
-    const allQuestions = QuizData;
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [currentOptionSelected, setCurrentOptionSelected] = useState(null);
     const [correctOption, setCorrectOption] = useState(null);
@@ -61,6 +37,22 @@ export default function PlayQuiz({ navigation }) {
     const [showNextButton, setShowNextButton] = useState(false);
     const [showScoreModal, setShowScoreModal] = useState(false);
     const answer: any = useContext(CorrectAnswerContext);
+
+    const { currentAnimal } = useContext(CurrentAnimalContext);
+    const { deviceIdContext, setDeviceIdContext } = useContext(DeviceIdContext);
+    const [allQuestions, setAllQuestions] = useState<any>([]);
+
+    useEffect(() => {
+        (async () => {
+            const data = await fetchQuestion("asdf", currentAnimal.id);
+            const mapped = [{
+                question: data.content,
+                options: data.answers.map((ans: any) => (ans.content)),
+                correct_option: data.answers.filter((a) => (a.is_correct)).map((ans: any) => (ans.content))[0],
+            }];
+            setAllQuestions(mapped);
+        })();
+    }, [deviceIdContext]);
 
     const validateAnswer = (selectedOption) => {
         let correct_option = allQuestions[currentQuestionIndex]['correct_option'];
@@ -148,7 +140,7 @@ export default function PlayQuiz({ navigation }) {
 
     const renderOptions = () => {
         return (
-            <View>
+            <View style={{ paddingBottom: 30 }}>
                 {allQuestions[currentQuestionIndex]?.options.map((option) => (
                     <TouchableOpacity
                         onPress={() => validateAnswer(option)}
@@ -289,16 +281,20 @@ export default function PlayQuiz({ navigation }) {
                             alignItems: 'flex-end',
                             paddingTop: 15
                         }}>
-                            <Button
-                                onPress={() => navigation.navigate('Camera')}
-                                title="<"
-                                color={COLORS.white}
-                                accessibilityLabel="Learn more about this purple button" />
 
-                            <Text style={{ alignItems: 'flex-end', justifyContent: 'center', color: COLORS.white, fontSize: 20 }}>
-                                You catch an Indian Elephant!
-                                Answer a question and add to collection
-                            </Text>
+                            <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Camera')}>
+                                <Image source={require("../assets/images/arrow_left.png")} width={10} height={20} style={{ width: 10, height: 20, margin: 10 }}></Image>
+                            </TouchableOpacity>
+
+                            <View style={{ flex: 10 }}>
+                                <Text style={{ alignItems: 'flex-end', textAlign: "center", justifyContent: 'center', color: COLORS.white, fontSize: 14 }}>
+                                    You catch an {currentAnimal.name}!
+                                </Text>
+                                <Text style={{ alignItems: 'flex-end', textAlign: "center", justifyContent: 'center', color: COLORS.white, fontSize: 14 }}>
+                                    Answer a question and add to collection
+                                </Text>
+                            </View>
+                            <View style={{ flex: 1 }}></View>
                         </View>
 
 
@@ -307,74 +303,6 @@ export default function PlayQuiz({ navigation }) {
 
                         {/* Options */}
                         {renderOptions()}
-
-                        {/* Next Button */}
-                        {renderNextButton()}
-
-                        {/* Score Modal */}
-                        <Modal animationType="slide" transparent={true} visible={showScoreModal}>
-                            <View
-                                style={{
-                                    flex: 1,
-                                    backgroundColor: COLORS.background,
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}>
-                                <View
-                                    style={{
-                                        backgroundColor: COLORS.white,
-                                        width: '90%',
-                                        borderRadius: 20,
-                                        padding: 20,
-                                        alignItems: 'center'
-                                    }}>
-                                    <Text style={{ fontSize: 30, fontWeight: 'bold' }}>
-                                        {score > allQuestions.length / 2 ? 'Congratulations!' : 'Oops!'}
-                                    </Text>
-
-                                    <View
-                                        style={{
-                                            flexDirection: 'row',
-                                            justifyContent: 'flex-start',
-                                            alignItems: 'center',
-                                            marginVertical: 20
-                                        }}>
-                                        <Text
-                                            style={{
-                                                fontSize: 30,
-                                                color: score > allQuestions.length / 2 ? COLORS.success : COLORS.error
-                                            }}>
-                                            {score}
-                                        </Text>
-                                        <Text
-                                            style={{
-                                                fontSize: 20,
-                                                color: COLORS.black
-                                            }}>
-                                            / {allQuestions.length}
-                                        </Text>
-                                    </View>
-                                    {/* Retry Quiz button */}
-                                    <TouchableOpacity
-                                        onPress={restartQuiz}
-                                        style={{
-                                            backgroundColor: COLORS.accent,
-                                            padding: 20,
-                                            width: '100%',
-                                            borderRadius: 20
-                                        }}>
-                                        <Text
-                                            style={{
-                                                textAlign: 'center',
-                                                color: COLORS.white,
-                                                fontSize: 20
-                                            }}>
-                                            Retry Quiz
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        </Modal>
                     </View>
                 </ImageBackground>
             </View>
@@ -413,9 +341,3 @@ const styles = StyleSheet.create({
         backgroundColor: '#000000c0'
     }
 });
-
-const SIZES = {
-    base: 10,
-    width: 50,
-    height: 50
-};

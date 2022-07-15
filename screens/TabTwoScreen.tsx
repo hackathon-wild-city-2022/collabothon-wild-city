@@ -108,7 +108,7 @@ export default function TabTwoScreen() {
 
   useEffect(() => {
     return () => {
-      cancelAnimationFrame(requestAnimationFrameId);
+      // cancelAnimationFrame(requestAnimationFrameId);
     };
   }, [requestAnimationFrameId]);
 
