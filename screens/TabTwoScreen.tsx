@@ -54,6 +54,7 @@ export default function TabTwoScreen() {
   }, []);
 
   const setAnimalContext = useCallback((animalName) => {
+    if (animalLocked) return;
     const animal = allAnimals.filter((a) => a.aiName == animalName);
     if (animal.length > 0) {
       setCurrentAnimal(animal[0]);
