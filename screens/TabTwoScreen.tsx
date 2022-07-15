@@ -38,6 +38,8 @@ export default function TabTwoScreen() {
   const [detections, setDetections] = useState<string[]>([]);
   const [model, setModel] = useState<any>();
 
+  let animalLocked = false;
+
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
@@ -62,6 +64,7 @@ export default function TabTwoScreen() {
 
   const openPopup = () => {
     if (currentAnimal) {
+      animalLocked = true;
       navigation.navigate('PlayQuiz');
     }
   }
@@ -99,7 +102,7 @@ export default function TabTwoScreen() {
           if (Math.max(...predictions) > 0.9) {
             const maxKey = predictions.indexOf(Math.max(...predictions));
             console.log("maxKey", classLabels[maxKey], Math.max(...predictions));
-            if (classLabels[maxKey] != "other") {
+            if (classLabels[maxKey] != "other" && animalLocked == false) {
               setDetections([classLabels[maxKey]]);
               setAnimalContext(classLabels[maxKey]);
             } else {
@@ -113,7 +116,9 @@ export default function TabTwoScreen() {
       tf.dispose([nextImageTensor]);
       frameCount += 1;
       frameCount = frameCount % makePredictionsEveryNFrames;
-      requestAnimationFrameId = requestAnimationFrame(loop);
+      if (animalLocked == false) {
+        requestAnimationFrameId = requestAnimationFrame(loop);
+      }
       // updatePreview();
       // gl.endFrameEXP();
     }
